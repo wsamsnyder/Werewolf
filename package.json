@@ -4,7 +4,7 @@
   "description": "This repo will one day be the interface for the game Werewolf that is usually played during Hack Reactor's Social Hack Night.",
   "main": "index.js",
   "scripts": {
-    "dev:build": "webpack -d",
+    "dev:build": "webpack -w -d",
     "dev:start": "nodemon -i public -i node_modules",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
