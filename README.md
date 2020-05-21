@@ -1,0 +1,1 @@
+This repo will one day be the interface for the game Werewolf that is usually played during Hack Reactor's Social Hack Night.

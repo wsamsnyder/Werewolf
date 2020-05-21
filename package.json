@@ -1,0 +1,28 @@
+{
+  "name": "werewolf",
+  "version": "1.0.0",
+  "description": "This repo will one day be the interface for the game Werewolf that is usually played during Hack Reactor's Social Hack Night.",
+  "main": "index.js",
+  "scripts": {
+    "dev:build": "webpack -d",
+    "dev:start": "nodemon -i public -i node_modules",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/diversifiedmechanic/Werewolf.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/diversifiedmechanic/Werewolf/issues"
+  },
+  "homepage": "https://github.com/diversifiedmechanic/Werewolf#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^5.9.15",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
+  }
+}
