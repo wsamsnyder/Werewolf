@@ -1,6 +1,7 @@
 const { Room } = require('./schemas');
 
 exports.db = {
+  // rename to create game
   createRoom: (name) => {
     console.log(name);
     const newRoom = new Room({
@@ -10,6 +11,7 @@ exports.db = {
     return newRoom.save();
   },
 
+  // rename to 'start game'
   createGame: (namesArr, roomId) => {
     const wolves = [];
     let seer = '';
