@@ -24,5 +24,6 @@ module.exports = {
   ],
   rules: {
     'no-console': 'off',
+    'no-plusplus': 'off',
   },
 };
