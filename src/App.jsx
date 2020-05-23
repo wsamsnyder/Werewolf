@@ -11,7 +11,7 @@ const socket = io.connect();
 const App = () => {
   socket.on('news', (data) => {
     console.log(data);
-    socket.emit('my other event', { my: 'data' });
+    socket.emit('my other event', { my: 'the dark side' });
   });
 
   return (
