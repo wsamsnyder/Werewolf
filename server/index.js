@@ -1,5 +1,8 @@
 /* eslint-disable no-console */
 const express = require('express');
+const server = require('http').Server(express());
+const io = require('socket.io')(server);
+
 const { db } = require('../database/controllers');
 
 const app = express();
