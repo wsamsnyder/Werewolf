@@ -1,16 +1,20 @@
 /* eslint-disable no-console */
 const express = require('express');
-const server = require('http').Server(express());
+
+const app = express();
+
+const server = require('http').Server(app);
 const io = require('socket.io')(server);
 
 const { db } = require('../database/controllers');
 
-const app = express();
-const port = 3000;
+const port = process.env.SERVER_PORT || 3000;
 
 app.use(express.static('public'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+
+// not sure if these will be needed once Sockets are in place
+// app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
 
 app.get('/api/newRoom', (req, res) => {
   const { name } = req.body;
@@ -36,4 +40,4 @@ app.get('/api/startGame', (req, res) => {
     });
 });
 
-app.listen(port, () => console.log(`listening on port ${port}`));
+server.listen(port, () => console.log(`listening on port ${port}`));
