@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+require('dotenv').config();
 const express = require('express');
 
 const app = express();
@@ -8,7 +9,7 @@ const io = require('socket.io')(server);
 
 const { db } = require('../database/controllers');
 
-const port = process.env.SERVER_PORT || 3000;
+const port = process.env.SERVER_PORT;
 
 app.use(express.static('public'));
 
