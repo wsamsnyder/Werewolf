@@ -40,4 +40,11 @@ app.get('/api/startGame', (req, res) => {
     });
 });
 
+io.on('connection', (socket) => {
+  socket.emit('news', { hello: 'world' });
+  socket.on('my other event', (data) => {
+    console.log(data);
+  });
+});
+
 server.listen(port, () => console.log(`listening on port ${port}`));
