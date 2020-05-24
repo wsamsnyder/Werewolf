@@ -1,4 +1,5 @@
 class Timer {
+  // might want to take the callback on first call
   constructor() {
     this.time = 0;
     this.intervalID = null;
@@ -22,20 +23,13 @@ class Timer {
 
   // stop
   stop() {
-    console.log(this.intervalID);
     clearInterval(this.intervalID);
   }
 
   // add? -> extend current time by x
+  add(additionalTime) {
+    this.time += additionalTime;
+  }
 }
 
-let timer = new Timer();
-
-timer.set(10);
-timer.start(console.log);
-
-setTimeout(timer.stop, 3000);
-
-// timer.start(console.log);
-
-// exports.Timer = Timer;
+exports.Timer = Timer;
