@@ -3,7 +3,6 @@ const { Room } = require('./schemas');
 exports.db = {
   // rename to create game
   createRoom: (name) => {
-    console.log(name);
     const newRoom = new Room({
       mod: name,
     });

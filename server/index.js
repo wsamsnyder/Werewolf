@@ -13,14 +13,14 @@ const port = process.env.SERVER_PORT;
 // not sure if these will be needed once Sockets are in place
 app.use(express.static('public'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// app.use(express.urlencoded({ extended: true }));
 
-app.get('/newRoom', (req, res) => {
-  const { name } = req.body;
+app.post('/newRoom', (req, res) => {
+  const { modName } = req.body;
 
-  db.createRoom(name)
-    .then((val) => {
-      res.status(201).json(val);
+  db.createRoom(modName)
+    .then(({ _id }) => {
+      res.status(201).json(_id);
     })
     .catch((error) => {
       res.status(500).json(error);
