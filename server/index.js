@@ -15,11 +15,23 @@ app.use(express.static('public'));
 app.use(express.json());
 // app.use(express.urlencoded({ extended: true }));
 
+// takes in the roomID and creates socket listeners
+const createNamespace = (roomID) => {
+  const room = io
+    .of(`/${roomID}`)
+    .on('connection', (socket) => {
+      socket.emit('connection', 'socket');
+      room.emit('connection', 'room');
+    });
+};
+
 app.post('/newRoom', (req, res) => {
   const { modName } = req.body;
 
+  // needs to create the socket for the room
   db.createRoom(modName)
     .then(({ _id }) => {
+      createNamespace(_id);
       res.status(201).json(_id);
     })
     .catch((error) => {
@@ -39,11 +51,12 @@ app.get('/startGame', (req, res) => {
     });
 });
 
-io.on('connection', (socket) => {
-  socket.emit('news', { hello: 'world' });
-  socket.on('my other event', (data) => {
-    console.log(data);
-  });
-});
+
+// io.on('connection', (socket) => {
+//   socket.emit('news', { hello: 'world' });
+//   socket.on('my other event', (data) => {
+//     console.log(data);
+//   });
+// });
 
 server.listen(port, () => console.log(`listening on port ${port}`));
