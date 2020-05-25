@@ -3,34 +3,34 @@ require('./index');
 
 const room = new mongoose.Schema({
   moderator: {
-    username: { type: String, required: true },
-    socketId: { type: String, required: true },
+    username: { type: String },
+    socketId: { type: String },
   },
 
   wolves: [
     {
-      username: { type: String, required: true },
-      socketId: { type: String, required: true },
+      username: { type: String },
+      socketId: { type: String },
       alive: { type: Boolean, default: true },
     },
   ],
 
   doctor: {
-    username: { type: String, required: true },
-    socketId: { type: String, required: true },
+    username: { type: String },
+    socketId: { type: String },
     alive: { type: Boolean, default: true },
   },
 
   seer: {
-    username: { type: String, required: true },
-    socketId: { type: String, required: true },
+    username: { type: String },
+    socketId: { type: String },
     alive: { type: Boolean, default: true },
   },
 
   townsPeople: [
     {
-      username: { type: String, required: true },
-      socketId: { type: String, required: true },
+      username: { type: String },
+      socketId: { type: String },
       alive: { type: Boolean, default: true },
     },
   ],
