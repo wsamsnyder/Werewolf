@@ -2,28 +2,35 @@ const mongoose = require('mongoose');
 require('./index');
 
 const room = new mongoose.Schema({
-  mod: String,
+  moderator: {
+    username: { type: String, required: true },
+    socketId: { type: String, required: true },
+  },
 
   wolves: [
     {
-      name: String,
+      username: { type: String, required: true },
+      socketId: { type: String, required: true },
       alive: { type: Boolean, default: true },
     },
   ],
 
   doctor: {
-    name: String,
+    username: { type: String, required: true },
+    socketId: { type: String, required: true },
     alive: { type: Boolean, default: true },
   },
 
   seer: {
-    name: String,
+    username: { type: String, required: true },
+    socketId: { type: String, required: true },
     alive: { type: Boolean, default: true },
   },
 
   townsPeople: [
     {
-      name: String,
+      username: { type: String, required: true },
+      socketId: { type: String, required: true },
       alive: { type: Boolean, default: true },
     },
   ],
