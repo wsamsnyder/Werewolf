@@ -1,10 +1,10 @@
 exports.api = {
-  createRoom: (modName) => fetch('/newRoom', {
+  createRoom: (moderator) => fetch('/newRoom', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ modName }),
+    body: JSON.stringify({ moderator }),
   })
     .then((response) => response.json()),
 };

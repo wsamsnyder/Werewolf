@@ -16,6 +16,7 @@ app.use(express.json());
 // app.use(express.urlencoded({ extended: true }));
 
 // takes in the roomID and creates socket listeners
+// I want to factor this out to it's own file
 const createNamespace = (roomID) => {
   const room = io
     .of(`/${roomID}`)
@@ -29,10 +30,10 @@ const createNamespace = (roomID) => {
 };
 
 app.post('/newRoom', (req, res) => {
-  const { modName } = req.body;
+  const { moderator } = req.body;
 
   // needs to create the socket for the room
-  db.createRoom(modName)
+  db.createRoom(moderator)
     .then(({ _id }) => {
       createNamespace(_id);
       res.status(201).json(_id);
