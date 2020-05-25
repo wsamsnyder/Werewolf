@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack -p",
     "dev:build": "webpack -w -d",
-    "dev:start": "nodemon -i public -i node_modules server",
+    "dev:start": "nodemon -i public -i node_modules -i src server",
     "start": "node server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
