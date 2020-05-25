@@ -20,8 +20,11 @@ const createNamespace = (roomID) => {
   const room = io
     .of(`/${roomID}`)
     .on('connection', (socket) => {
-      socket.emit('connection', 'socket');
-      room.emit('connection', 'room');
+      console.log('connected on roomID: ', roomID);
+      // socket.emit('connection', 'socket');
+      room.emit('a message', {
+        message: 'connected',
+      });
     });
 };
 
