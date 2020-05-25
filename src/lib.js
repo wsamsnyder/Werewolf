@@ -1,6 +1,6 @@
 exports.api = {
-  createRoom: (modName) => {
-    return fetch('/newRoom', {
+  createRoom: (modName) => (
+    fetch('/newRoom', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -8,5 +8,5 @@ exports.api = {
       body: JSON.stringify({ modName }),
     })
       .then((response) => response.json());
-  },
+  ),
 };
