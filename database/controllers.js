@@ -10,33 +10,31 @@ exports.db = {
     return newRoom.save();
   },
 
+  // joinGame: (name, socketId) => {
+
+  // },
+
   // rename to 'start game'
-  createGame: (namesArr, roomId) => {
+  startGame: (roomId) => {
     const wolves = [];
     let seer = '';
     let doctor = '';
-    let name = '';
-    const townsPeople = [];
 
-    const names = namesArr.split(',');
+    const { townsPeople } = Room.findById(roomId);
 
-    names.forEach((person) => {
-      townsPeople.push({ name: person, alive: true });
-    });
+    const townsPeopleCopy = [...townsPeople];
 
-    const numOfWolves = Math.floor(names.length / 5);
+    const numOfWolves = Math.floor(townsPeopleCopy.length / 5);
 
     for (let i = 0; i <= numOfWolves + 2; i++) {
-      const randomPlayerIndex = Math.floor(Math.random() * names.length);
+      const randomPlayerIndex = Math.floor(Math.random() * townsPeopleCopy.length);
 
       if (wolves.length < numOfWolves) {
-        wolves.push({ name: names.splice(randomPlayerIndex, 1)[0], alive: true });
+        wolves.push(townsPeopleCopy.splice(randomPlayerIndex, 1)[0]);
       } else if (!seer) {
-        [name] = names.splice(randomPlayerIndex, 1);
-        seer = { name, alive: true };
+        [seer] = townsPeopleCopy.splice(randomPlayerIndex, 1);
       } else {
-        [name] = names.splice(randomPlayerIndex, 1);
-        doctor = { name, alive: true };
+        [doctor] = townsPeopleCopy.splice(randomPlayerIndex, 1);
       }
     }
 
