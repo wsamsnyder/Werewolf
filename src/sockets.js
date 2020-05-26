@@ -11,12 +11,17 @@ class Socket {
     this.namespace = io.connect(`/${this.namespaceId}`);
 
     this.namespace.on('connect', () => {
-      this.namespace.emit('message', { message: `${this.username} has joined`, username: this.username });
+      this.namespace.emit('connected', this.username);
       // maybe a toast message on connection?
+      console.log('Successfully connected to room: ', this.namespaceId);
       callback('Successfully connected to room: ', this.namespaceId);
     });
 
-    this.namespace.on('message', (message) => console.log(message));
+    this.namespace.on('message', (message) => callback(message));
+  }
+
+  sendMessage(message) {
+    this.namespace.emit('message', message);
   }
 }
 
