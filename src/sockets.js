@@ -2,23 +2,21 @@ import io from 'socket.io-client';
 
 // joins namespace and the townspeople chat
 class Socket {
-  constructor(namespaceId) {
+  constructor(namespaceId, username) {
     this.namespaceId = namespaceId;
+    this.username = username;
   }
 
   joinNamespace(callback) {
-    console.log(this.namespaceId);
     this.namespace = io.connect(`/${this.namespaceId}`);
 
     this.namespace.on('connect', () => {
-      callback('connected to namespace: ', this.namespaceId);
+      this.namespace.emit('message', { message: `${this.username} has joined`, username: this.username });
+      // maybe a toast message on connection?
+      callback('Successfully connected to room: ', this.namespaceId);
     });
 
-    this.namespace.on('message', (message) => callback(message));
-
-    // this.namespace.on('a message', (data) => {
-    //   console.log(data.message);
-    // });
+    this.namespace.on('message', (message) => console.log(message));
   }
 }
 

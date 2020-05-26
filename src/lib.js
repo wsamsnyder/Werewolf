@@ -1,5 +1,5 @@
 exports.api = {
-  createNamespace: (moderator) => fetch('/newNamespace', {
+  createNamespace: (moderator) => fetch('/createNamespace', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

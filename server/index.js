@@ -17,19 +17,23 @@ app.use(express.json());
 
 // takes in the roomID and creates socket listeners
 // I want to factor this out to it's own file
-const createNamespace = (roomID) => {
-  const room = io
-    .of(`/${roomID}`)
+const createNamespace = (namespaceId) => {
+  const namespace = io
+    .of(`/${namespaceId}`)
     .on('connection', (socket) => {
-      console.log('connected on roomID: ', roomID);
+      console.log('created namespace: ', namespaceId);
       // socket.emit('connection', 'socket');
-      room.emit('a message', {
-        message: 'connected',
+      socket.join('townsPeopleChat');
+
+      socket.on('message', ({ message, username }) => {
+        console.log(message, username);
+        namespace.emit('message', { message, username });
       });
     });
+
 };
 
-app.post('/newRoom', (req, res) => {
+app.post('/createNamespace', (req, res) => {
   const { moderator } = req.body;
 
   // needs to create the socket for the room

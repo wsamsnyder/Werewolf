@@ -20,7 +20,7 @@ const App = () => {
   const createNamespace = () => {
     api.createNamespace('sam')
       .then((roomID) => {
-        namespace = new Socket(roomID);
+        namespace = new Socket(roomID, 'sam');
         namespace.joinNamespace((message) => (
           // may make this perm if it's something that will be done often
           // eslint-disable-next-line no-shadow
@@ -32,6 +32,7 @@ const App = () => {
   return (
     <div>
       <button type="button" onClick={createNamespace}>Create Namespace</button>
+      <button type="button">{namespaceChat}</button>
     </div>
   );
 };
