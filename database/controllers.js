@@ -10,7 +10,7 @@ exports.db = {
     return newRoom.save();
   },
 
-  // joinGame: (name, socketId) => {
+  // joinGame: (name, socketId, roomId) => {
 
   // },
 
