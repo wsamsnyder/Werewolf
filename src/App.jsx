@@ -1,6 +1,7 @@
-import React from 'react';
-import io from 'socket.io-client';
+import React, { useState } from 'react';
+// import io from 'socket.io-client';
 
+import Socket from './sockets';
 import { api } from './lib';
 
 // const socket = io.connect();
@@ -11,37 +12,26 @@ import { api } from './lib';
 // });
 
 const App = () => {
-  let room;
-
-  // room.on('connect', () => {
-  //   room.emit('hello there');
-  // });
-
-  // socket.on('news', (data) => {
-  //   console.log(data);
-  //   socket.emit('my other event', { my: 'the dark side' });
-  // });
+  let namespace;
+  const [namespaceChat, setNamespaceChat] = useState([]);
+  // let [townsPeopleChat, setTownsPeopleChat] = useState([]);
 
   // make a new room with the namespace of the id returned
   const createNamespace = () => {
-    api.createRoom('sam')
+    api.createNamespace('sam')
       .then((roomID) => {
-        console.log(roomID);
-        room = io.connect(`/${roomID}`);
-
-        room.on('connect', () => {
-          room.emit('hello there');
-        });
-
-        room.on('a message', (data) => {
-          console.log(data.message);
-        });
+        namespace = new Socket(roomID);
+        namespace.joinNamespace((message) => (
+          // may make this perm if it's something that will be done often
+          // eslint-disable-next-line no-shadow
+          setNamespaceChat((namespaceChat) => [...namespaceChat, message])
+        ));
       });
   };
 
   return (
     <div>
-      <button type="button" onClick={createNamespace}>Create Room</button>
+      <button type="button" onClick={createNamespace}>Create Namespace</button>
     </div>
   );
 };
