@@ -5,6 +5,9 @@ exports.db = {
   createRoom: (name) => {
     const newRoom = new Room({
       mod: name,
+      wolves: [{ username: name }],
+      doctor: [{ username: name }],
+      seer: [{ username: name }],
     });
 
     return newRoom.save();
@@ -16,11 +19,12 @@ exports.db = {
 
   // rename to 'start game'
   startGame: (roomId) => {
-    const wolves = [];
-    let seer = '';
-    let doctor = '';
-
-    const { townsPeople } = Room.findById(roomId);
+    const {
+      wolves,
+      doctor,
+      seer,
+      townsPeople,
+    } = Room.findById(roomId);
 
     const townsPeopleCopy = [...townsPeople];
 
@@ -32,11 +36,12 @@ exports.db = {
       if (wolves.length < numOfWolves) {
         wolves.push(townsPeopleCopy.splice(randomPlayerIndex, 1)[0]);
       } else if (!seer) {
-        [seer] = townsPeopleCopy.splice(randomPlayerIndex, 1);
+        seer.push(townsPeopleCopy.splice(randomPlayerIndex, 1)[0]);
       } else {
-        [doctor] = townsPeopleCopy.splice(randomPlayerIndex, 1);
+        doctor.push(townsPeopleCopy.splice(randomPlayerIndex, 1)[0]);
       }
     }
+
 
     // save to db
     return Room.findByIdAndUpdate(roomId, {

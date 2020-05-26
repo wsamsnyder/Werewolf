@@ -15,17 +15,21 @@ const room = new mongoose.Schema({
     },
   ],
 
-  doctor: {
-    username: { type: String },
-    socketId: { type: String },
-    alive: { type: Boolean, default: true },
-  },
+  doctor: [
+    {
+      username: { type: String },
+      socketId: { type: String },
+      alive: { type: Boolean, default: true },
+    },
+  ],
 
-  seer: {
-    username: { type: String },
-    socketId: { type: String },
-    alive: { type: Boolean, default: true },
-  },
+  seer: [
+    {
+      username: { type: String },
+      socketId: { type: String },
+      alive: { type: Boolean, default: true },
+    },
+  ],
 
   townsPeople: [
     {
