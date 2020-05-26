@@ -21,16 +21,14 @@ const createNamespace = (namespaceId) => {
   const namespace = io
     .of(`/${namespaceId}`)
     .on('connection', (socket) => {
-      console.log('created namespace: ', namespaceId);
-      // socket.emit('connection', 'socket');
-      socket.join('townsPeopleChat');
+      socket.on('connected', (username) => {
+        namespace.emit('message', `${username} has joined!`);
+      });
 
-      socket.on('message', ({ message, username }) => {
-        console.log(message, username);
-        namespace.emit('message', { message, username });
+      socket.on('message', (message) => {
+        namespace.emit('message', message);
       });
     });
-
 };
 
 app.post('/createNamespace', (req, res) => {
@@ -38,9 +36,27 @@ app.post('/createNamespace', (req, res) => {
 
   // needs to create the socket for the room
   db.createRoom(moderator)
-    .then(({ _id }) => {
-      createNamespace(_id);
-      res.status(201).json(_id);
+    .then(({
+      _id,
+      wolves,
+      doctor,
+      seer,
+    }) => {
+      // console.log(_id, wolves[0], doctor[0], seer[0]);
+      const channels = [[{ _id }], wolves, doctor, seer];
+      channels.forEach((channel) => {
+        console.log(channel);
+        createNamespace(channel[0]._id);
+      });
+
+      res.status(201).json(
+        [
+          { chatName: 'townsPeopleChat', id: _id },
+          { chatName: 'wolvesChat', id: wolves[0]._id },
+          { chatName: 'doctorChat', id: doctor[0]._id },
+          { chatName: 'seerChat', id: seer[0]._id },
+        ],
+      );
     })
     .catch((error) => {
       res.status(500).json(error);
