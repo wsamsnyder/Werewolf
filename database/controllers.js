@@ -59,17 +59,13 @@ exports.db = {
     Room.findById(gameId)
       .then((gameRoom) => {
         const room = gameRoom[chatRoom];
-        const socket = socketId.split('#')[1];
-
         for (let i = 0; i < room.length; i++) {
           if (room[i]._id.toString() === userId && room[i].socketId === undefined) {
-            console.log('here');
-            room[i].socketId = socket;
-            gameRoom.save()
+            room[i].socketId = socketId;
+            return gameRoom.save()
               .then(() => true);
           }
         }
-
         return false;
       })
   ),

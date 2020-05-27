@@ -15,18 +15,28 @@ app.use(express.static('public'));
 app.use(express.json());
 // app.use(express.urlencoded({ extended: true }));
 
+// const removeSocket = (namespaceId, socketId) => {
+//   io.of(namespaceId).
+// };
+
 // takes in the roomID and creates socket listeners
 // I want to factor this out to it's own file
 const createNamespace = (namespaceId) => {
   const namespace = io
     .of(`/${namespaceId}`)
     .on('connection', (socket) => {
+      // may need socket validation here
+
       socket.on('connected', (username, userId, gameId, roomName) => {
         // see if the player's userId is already in the db w/socketId. reject the connection if true
-        console.log( userId, gameId, roomName);
-        db.validatePlayer(userId, gameId, roomName, socket.id)
+        const socketId = socket.id.split('#')[1];
+        db.validatePlayer(userId, gameId, roomName, socketId)
           .then((isValidPlayer) => {
-            if (isValidPlayer) namespace.emit('message', `${username} has joined!`);
+            if (isValidPlayer) {
+              namespace.emit('message', `${username} has joined!`);
+            } else {
+              socket.disconnect();
+            }
           });
       });
 
