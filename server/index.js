@@ -23,7 +23,7 @@ const createNamespace = (namespaceId) => {
     .on('connection', (socket) => {
       socket.on('connected', (username, userId, gameId, roomName) => {
         // see if the player's userId is already in the db w/socketId. reject the connection if true
-        console.log(username, userId, gameId, roomName);
+        console.log( userId, gameId, roomName);
         db.validatePlayer(userId, gameId, roomName, socket.id)
           .then((isValidPlayer) => {
             if (isValidPlayer) namespace.emit('message', `${username} has joined!`);
