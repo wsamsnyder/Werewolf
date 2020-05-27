@@ -5,43 +5,46 @@ exports.db = {
   createRoom: (name) => {
     const newRoom = new Room({
       mod: name,
+      wolves: [{ username: name }],
+      doctor: [{ username: name }],
+      seer: [{ username: name }],
+      townsPeople: [{ username: name }],
     });
 
     return newRoom.save();
   },
 
+  // joinGame: (name, socketId, gameId) => {
+
+  // },
+
   // rename to 'start game'
-  createGame: (namesArr, roomId) => {
-    const wolves = [];
-    let seer = '';
-    let doctor = '';
-    let name = '';
-    const townsPeople = [];
+  startGame: (gameId) => {
+    const {
+      wolves,
+      doctor,
+      seer,
+      townsPeople,
+    } = Room.findById(gameId);
 
-    const names = namesArr.split(',');
+    const townsPeopleCopy = [...townsPeople];
 
-    names.forEach((person) => {
-      townsPeople.push({ name: person, alive: true });
-    });
-
-    const numOfWolves = Math.floor(names.length / 5);
+    const numOfWolves = Math.floor(townsPeopleCopy.length / 5);
 
     for (let i = 0; i <= numOfWolves + 2; i++) {
-      const randomPlayerIndex = Math.floor(Math.random() * names.length);
+      const randomPlayerIndex = Math.floor(Math.random() * townsPeopleCopy.length);
 
       if (wolves.length < numOfWolves) {
-        wolves.push({ name: names.splice(randomPlayerIndex, 1)[0], alive: true });
+        wolves.push(townsPeopleCopy.splice(randomPlayerIndex, 1)[0]);
       } else if (!seer) {
-        [name] = names.splice(randomPlayerIndex, 1);
-        seer = { name, alive: true };
+        seer.push(townsPeopleCopy.splice(randomPlayerIndex, 1)[0]);
       } else {
-        [name] = names.splice(randomPlayerIndex, 1);
-        doctor = { name, alive: true };
+        doctor.push(townsPeopleCopy.splice(randomPlayerIndex, 1)[0]);
       }
     }
 
     // save to db
-    return Room.findByIdAndUpdate(roomId, {
+    return Room.findByIdAndUpdate(gameId, {
       wolves,
       seer,
       doctor,
@@ -51,4 +54,19 @@ exports.db = {
       new: true,
     });
   },
+
+  validatePlayer: (userId, gameId, chatRoom, socketId) => (
+    Room.findById(gameId)
+      .then((gameRoom) => {
+        const room = gameRoom[chatRoom];
+        for (let i = 0; i < room.length; i++) {
+          if (room[i]._id.toString() === userId && room[i].socketId === undefined) {
+            room[i].socketId = socketId;
+            return gameRoom.save()
+              .then(() => true);
+          }
+        }
+        return false;
+      })
+  ),
 };

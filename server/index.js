@@ -15,27 +15,73 @@ app.use(express.static('public'));
 app.use(express.json());
 // app.use(express.urlencoded({ extended: true }));
 
+// const removeSocket = (namespaceId, socketId) => {
+//   io.of(namespaceId).
+// };
+
 // takes in the roomID and creates socket listeners
-const createNamespace = (roomID) => {
-  const room = io
-    .of(`/${roomID}`)
+// I want to factor this out to it's own file
+const createNamespace = (namespaceId) => {
+  const namespace = io
+    .of(`/${namespaceId}`)
     .on('connection', (socket) => {
-      console.log('connected on roomID: ', roomID);
-      // socket.emit('connection', 'socket');
-      room.emit('a message', {
-        message: 'connected',
+      const validSocketIds = {};
+
+      socket.on('connected', (username, userId, gameId, roomName) => {
+        // see if the player's userId is already in the db w/socketId. reject the connection if true
+        const socketId = socket.id.split('#')[1];
+        db.validatePlayer(userId, gameId, roomName, socketId)
+          .then((isValidPlayer) => {
+            console.log(isValidPlayer);
+            if (isValidPlayer) {
+              validSocketIds[socket.id] = true;
+              namespace.emit('message', `${username} has joined!`);
+            } else {
+              socket.disconnect();
+            }
+          });
+      });
+
+      socket.on('message', (message) => {
+        if (validSocketIds[socket.id]) {
+          namespace.emit('message', message);
+        } else {
+          socket.disconnect();
+        }
       });
     });
 };
 
-app.post('/newRoom', (req, res) => {
-  const { modName } = req.body;
+app.post('/createNamespace', (req, res) => {
+  const { moderator } = req.body;
 
   // needs to create the socket for the room
-  db.createRoom(modName)
-    .then(({ _id }) => {
-      createNamespace(_id);
-      res.status(201).json(_id);
+  db.createRoom(moderator)
+    .then(({
+      _id,
+      townsPeople,
+      wolves,
+      doctor,
+      seer,
+    }) => {
+      // console.log(_id, wolves[0], doctor[0], seer[0], townsPeople[0]);
+      const channels = [townsPeople, wolves, doctor, seer];
+      channels.forEach((channel) => {
+        createNamespace(channel[0]._id);
+      });
+
+
+      res.status(201).json(
+        {
+          gameId: _id,
+          chatRooms: [
+            { roomName: 'townsPeople', roomId: townsPeople[0]._id },
+            { roomName: 'wolves', roomId: wolves[0]._id },
+            { roomName: 'doctor', roomId: doctor[0]._id },
+            { roomName: 'seer', roomId: seer[0]._id },
+          ],
+        },
+      );
     })
     .catch((error) => {
       res.status(500).json(error);
