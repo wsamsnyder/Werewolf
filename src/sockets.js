@@ -24,7 +24,7 @@ class Socket {
   }
 
   sendMessage(message) {
-    this.namespace.emit('message', message);
+    this.namespace.emit('message', { username: this.username, message });
   }
 }
 

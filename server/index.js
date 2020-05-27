@@ -35,16 +35,16 @@ const createNamespace = (namespaceId) => {
             console.log(isValidPlayer);
             if (isValidPlayer) {
               validSocketIds[socket.id] = true;
-              namespace.emit('message', `${username} has joined!`);
+              namespace.emit('message', { username, message: 'joined!' });
             } else {
               socket.disconnect();
             }
           });
       });
 
-      socket.on('message', (message) => {
+      socket.on('message', (messageObj) => {
         if (validSocketIds[socket.id]) {
-          namespace.emit('message', message);
+          namespace.emit('message', messageObj);
         } else {
           socket.disconnect();
         }

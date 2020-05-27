@@ -1,18 +1,12 @@
 import React, { useState } from 'react';
 
-import Socket from './sockets';
+// import Socket from './sockets';
 import { api } from './lib';
 import ChatRoom from './chatRoom';
 
 const App = () => {
-  // these channels should be moved to the messaging module
-  // const [townsPeopleChat, setTownsPeopleChat] = useState([]);
-  // const [wolves, setWolvesChat] = useState([]);
-  // const [doctor, setDoctorChat] = useState([]);
-  // const [seer, setSeerChat] = useState([]);
   const [sockets, setSockets] = useState([]);
   const [room, setRoom] = useState('');
-  // let [townsPeopleChat, setTownsPeopleChat] = useState([]);
 
   // make a new room with the namespace of the id returned
   const createGameRoom = () => {
@@ -30,7 +24,7 @@ const App = () => {
           });
 
           // if (roomName === 'townsPeople') {
-            // const chat = new Socket(roomId, 'sam', roomId, gameId, roomName);
+          //   const chat = new Socket(roomId, 'sam', roomId, gameId, roomName);
           //   setSockets((allSockets) => ([ ...allSockets, townsPeople: chat ]));
           //   chat.joinNamespace((message) => (
           //     setTownsPeopleChat((previousMessages) => [...previousMessages, message])
@@ -58,22 +52,22 @@ const App = () => {
           //   ));
           // }
         });
+        setSockets(rooms);
       });
   };
-
-
 
   return (
     <div>
       <button type="button" onClick={createGameRoom}>Create Namespace</button>
-      <div>{townsPeopleChat}</div>
       <div>{room}</div>
       {
-        sockets.map((socket) => (
-          <ChatRoom  />
+        sockets.map((roomData) => (
+          <ChatRoom
+            key={roomData.roomId}
+            roomData={roomData}
+          />
         ))
       }
-      <button type="button" onClick={sendMessage}>Send Message</button>
     </div>
   );
 };
