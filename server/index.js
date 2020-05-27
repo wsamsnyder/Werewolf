@@ -27,15 +27,16 @@ const createNamespace = (namespaceId) => {
     .on('connection', (socket) => {
       const validSocketIds = {};
 
-      socket.on('connected', (username, userId, gameId, roomName) => {
+      socket.on('firstConnection', (username, userId, gameId, roomName) => {
         // see if the player's userId is already in the db w/socketId. reject the connection if true
+        console.log('on first connection')
         const socketId = socket.id.split('#')[1];
         db.validatePlayer(userId, gameId, roomName, socketId)
           .then((isValidPlayer) => {
             console.log(isValidPlayer);
             if (isValidPlayer) {
               validSocketIds[socket.id] = true;
-              namespace.emit('message', { username, message: 'joined!' });
+              namespace.emit('message', { username, message: ' has joined!' });
             } else {
               socket.disconnect();
             }
