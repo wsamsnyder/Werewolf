@@ -1,5 +1,5 @@
 exports.api = {
-  createNamespace: (moderator) => fetch('/createNamespace', {
+  createGameRoom: (moderator) => fetch('/createNamespace', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

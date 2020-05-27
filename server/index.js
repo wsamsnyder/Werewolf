@@ -21,8 +21,13 @@ const createNamespace = (namespaceId) => {
   const namespace = io
     .of(`/${namespaceId}`)
     .on('connection', (socket) => {
-      socket.on('connected', (username) => {
-        namespace.emit('message', `${username} has joined!`);
+      socket.on('connected', (username, userId, gameId, roomName) => {
+        // see if the player's userId is already in the db w/socketId. reject the connection if true
+        console.log(username, userId, gameId, roomName);
+        db.validatePlayer(userId, gameId, roomName, socket.id)
+          .then((isValidPlayer) => {
+            if (isValidPlayer) namespace.emit('message', `${username} has joined!`);
+          });
       });
 
       socket.on('message', (message) => {
@@ -38,24 +43,28 @@ app.post('/createNamespace', (req, res) => {
   db.createRoom(moderator)
     .then(({
       _id,
+      townsPeople,
       wolves,
       doctor,
       seer,
     }) => {
-      // console.log(_id, wolves[0], doctor[0], seer[0]);
-      const channels = [[{ _id }], wolves, doctor, seer];
+      // console.log(_id, wolves[0], doctor[0], seer[0], townsPeople[0]);
+      const channels = [townsPeople, wolves, doctor, seer];
       channels.forEach((channel) => {
-        console.log(channel);
         createNamespace(channel[0]._id);
       });
 
+
       res.status(201).json(
-        [
-          { chatName: 'townsPeopleChat', id: _id },
-          { chatName: 'wolvesChat', id: wolves[0]._id },
-          { chatName: 'doctorChat', id: doctor[0]._id },
-          { chatName: 'seerChat', id: seer[0]._id },
-        ],
+        {
+          gameId: _id,
+          chatRooms: [
+            { roomName: 'townsPeople', roomId: townsPeople[0]._id },
+            { roomName: 'wolves', roomId: wolves[0]._id },
+            { roomName: 'doctor', roomId: doctor[0]._id },
+            { roomName: 'seer', roomId: seer[0]._id },
+          ],
+        },
       );
     })
     .catch((error) => {

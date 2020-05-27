@@ -8,23 +8,24 @@ exports.db = {
       wolves: [{ username: name }],
       doctor: [{ username: name }],
       seer: [{ username: name }],
+      townsPeople: [{ username: name }],
     });
 
     return newRoom.save();
   },
 
-  // joinGame: (name, socketId, roomId) => {
+  // joinGame: (name, socketId, gameId) => {
 
   // },
 
   // rename to 'start game'
-  startGame: (roomId) => {
+  startGame: (gameId) => {
     const {
       wolves,
       doctor,
       seer,
       townsPeople,
-    } = Room.findById(roomId);
+    } = Room.findById(gameId);
 
     const townsPeopleCopy = [...townsPeople];
 
@@ -42,9 +43,8 @@ exports.db = {
       }
     }
 
-
     // save to db
-    return Room.findByIdAndUpdate(roomId, {
+    return Room.findByIdAndUpdate(gameId, {
       wolves,
       seer,
       doctor,
@@ -54,4 +54,25 @@ exports.db = {
       new: true,
     });
   },
+
+  validatePlayer: (userId, gameId, chatRoom, socketId) => (
+    Room.findById(gameId)
+      .then((gameRoom) => {
+        const room = gameRoom[chatRoom];
+        // console.log(socketId.split('#')[1]);
+        const socket = socketId.split('#')[1];
+
+        for (let i = 0; i < room.length; i++) {
+          console.log(room[i].socketId);
+          if (room[i]._id === userId && !room[i].socketId) {
+            console.log('here');
+            room[i].socketId = socket;
+            console.log(gameRoom);
+            // Room.findByIdAndUpdate()
+            return true;
+          }
+        }
+        return false;
+      })
+  ),
 };
