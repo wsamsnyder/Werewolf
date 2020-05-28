@@ -7,8 +7,8 @@ import ChatMessage from './ChatMessage';
 
 const ChatRoomDiv = styled.div`
   // display: grid;
-  grid-column: 3;
-  grid-row: ${(props) => props.location + 2};
+  grid-column: ${(props) => props.roomId === 'townsPeople' ? '1 / 3' : '3'};
+  grid-row: ${(props) => props.roomId === 'townsPeople' ? '1' : `${props.location + 2}`};
   border-style: solid;
 `;
 
@@ -19,6 +19,8 @@ const ChatRoom = ({ roomData, location }) => {
   const [messages, setMessages] = useState([]);
   const [socket, setSocket] = useState(null);
   const [newMessage, setNewMessage] = useState('');
+
+  console.log(roomData.roomName);
 
   const {
     roomId,
@@ -50,7 +52,7 @@ const ChatRoom = ({ roomData, location }) => {
   };
 
   return (
-    <ChatRoomDiv location={location}>
+    <ChatRoomDiv className={roomData.roomName} location={location} room={roomData.roomName}>
       <div>
         {roomName}
       </div>

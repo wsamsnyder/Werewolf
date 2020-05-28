@@ -51,7 +51,15 @@ const App = () => {
     api.createGameRoom('sam')
       .then(({ gameId, chatRooms }) => {
         setRoom(gameId);
-        setTown(chatRooms[0]);
+        const townRoomName = chatRooms[0].roomName;
+        const townRoomId = chatRooms[0].roomId;
+        setTown({
+          roomId: townRoomId,
+          username,
+          userId: townRoomId,
+          gameId,
+          roomName: townRoomName,
+        });
         const rooms = [];
         for (let i = 1; i < chatRooms.length; i++) {
           const { roomName, roomId } = chatRooms[i];
@@ -86,11 +94,10 @@ const App = () => {
     return (
       <MainDiv>
         <GameId>{room}</GameId>
-        {/* {
-          <ChatRoom
-
-          />
-        } */}
+        <ChatRoom
+          location={0}
+          roomData={town}
+        />
         {
           sockets.map((roomData, idx) => (
             <ChatRoom
