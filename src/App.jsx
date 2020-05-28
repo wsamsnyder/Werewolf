@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 // import Socket from './sockets';
 import { api } from './lib';
-import ChatRoom from './chatRoom';
+import ChatRoom from './ChatRoom';
 
 const App = () => {
   const [sockets, setSockets] = useState([]);
@@ -22,43 +22,21 @@ const App = () => {
             gameId,
             roomName,
           });
-
-          // if (roomName === 'townsPeople') {
-          //   const chat = new Socket(roomId, 'sam', roomId, gameId, roomName);
-          //   setSockets((allSockets) => ([ ...allSockets, townsPeople: chat ]));
-          //   chat.joinNamespace((message) => (
-          //     setTownsPeopleChat((previousMessages) => [...previousMessages, message])
-          //   ));
-          // }
-          // if (roomName === 'wolves') {
-          //   const chat = new Socket(roomId, 'sam', roomId, gameId, roomName);
-          //   setSockets((allSockets) => ([ ...allSockets, wolves: chat ]));
-          //   chat.joinNamespace((message) => (
-          //     setWolvesChat((previousMessages) => [...previousMessages, message])
-          //   ));
-          // }
-          // if (roomName === 'doctor') {
-          //   const chat = new Socket(roomId, 'sam', roomId, gameId, roomName);
-          //   setSockets((allSockets) => ([ ...allSockets, doctor: chat ]));
-          //   chat.joinNamespace((message) => (
-          //     setDoctorChat((previousMessages) => [...previousMessages, message])
-          //   ));
-          // }
-          // if (roomName === 'seer') {
-          //   const chat = new Socket(roomId, 'sam', roomId, gameId, roomName);
-          //   setSockets((allSockets) => ([ ...allSockets, seer: chat ]));
-          //   chat.joinNamespace((message) => (
-          //     setSeerChat((previousMessages) => [...previousMessages, message])
-          //   ));
-          // }
         });
         setSockets(rooms);
       });
   };
 
+  const joinGameRoom = () => {
+    // not implemented atm
+    // api.joinGameRoom('sam');
+  };
+
+
   return (
     <div>
-      <button type="button" onClick={createGameRoom}>Create Namespace</button>
+      <button type="button" onClick={createGameRoom}>Create Room</button>
+      <button type="button" onClick={joinGameRoom}>Join Room</button>
       <div>{room}</div>
       {
         sockets.map((roomData) => (

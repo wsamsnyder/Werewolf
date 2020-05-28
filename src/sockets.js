@@ -11,7 +11,6 @@ class Socket {
   }
 
   joinNamespace(callback) {
-    console.log('inside joinNamespace');
     this.namespace = io.connect(`/${this.namespaceId}`);
 
     this.namespace.on('connect', () => {
@@ -19,7 +18,6 @@ class Socket {
     });
 
     this.namespace.on('message', (message) => {
-      console.log(message);
       callback(message);
     });
   }

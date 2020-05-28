@@ -1,27 +1,28 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import Socket from './sockets';
 
-import ChatMessage from './chatMessage';
+import ChatMessage from './ChatMessage';
 
 // template for chatroom
-const chatRoom = ({ roomData }) => {
+const ChatRoom = ({ roomData }) => {
   const [messages, setMessages] = useState([]);
   const [socket, setSocket] = useState(null);
+  const [message, setMessage] = useState('');
 
   const {
     roomId,
-    username,
+    username = 'sam',
     userId,
     gameId,
     roomName,
   } = roomData;
 
   useEffect(() => {
-    const newSocket = new Socket(roomId, 'sam', roomId, gameId, roomName);
+    const newSocket = new Socket(roomId, username, userId, gameId, roomName);
     setSocket(newSocket);
 
     newSocket.joinNamespace((message) => {
-      console.log('chatRoom: join namespace');
       setMessages((previousMessages) => [...previousMessages, message]);
     });
   }, []);
@@ -56,4 +57,9 @@ const chatRoom = ({ roomData }) => {
 
 // need to do props validation
 
-export default chatRoom;
+ChatRoom.propTypes = {
+  roomData: PropTypes.objectOf(PropTypes.string).isRequired
+  ,
+};
+
+export default ChatRoom;
