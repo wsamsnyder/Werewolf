@@ -8,7 +8,7 @@ import ChatMessage from './ChatMessage';
 const ChatRoom = ({ roomData }) => {
   const [messages, setMessages] = useState([]);
   const [socket, setSocket] = useState(null);
-  const [message, setMessage] = useState('');
+  const [newMessage, setNewMessage] = useState('');
 
   const {
     roomId,
@@ -22,35 +22,43 @@ const ChatRoom = ({ roomData }) => {
     const newSocket = new Socket(roomId, username, userId, gameId, roomName);
     setSocket(newSocket);
 
-    newSocket.joinNamespace((message) => {
-      setMessages((previousMessages) => [...previousMessages, message]);
+    newSocket.joinNamespace((receivedMessage) => {
+      setMessages((previousMessages) => [...previousMessages, receivedMessage]);
     });
   }, []);
 
 
   // this can be passed down to an input component
-  const sendMessage = (message) => {
-    socket.sendMessage('hello There');
+  const sendMessage = (e) => {
+    e.preventDefault();
+    socket.sendMessage(newMessage);
+    setNewMessage('');
   };
 
   return (
     <div>
-      {
-        messages.map((message, idx) => (
-          <ChatMessage
-            // eslint-disable-next-line react/no-array-index-key
-            // prob want to find a better way of doing this key
-            key={idx}
-            username={message.username}
-            message={message.message}
-          />
-        ))
-      }
-      <button type="button" onClick={sendMessage}>
-        Send to
-        {roomName}
-        : hello there
-      </button>
+      <div>
+        {
+          messages.map((message, idx) => (
+            <ChatMessage
+              // prob want to find a better way of doing this key.
+              // Each message would need a unique id
+              // eslint-disable-next-line react/no-array-index-key
+              key={idx}
+              username={message.username}
+              message={message.message}
+            />
+          ))
+        }
+      </div>
+      <div>
+        <form onSubmit={sendMessage}>
+          <label htmlFor="newMessage">
+            <input className="newMessage" type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} />
+          </label>
+          <input type="submit" value="Send" />
+        </form>
+      </div>
     </div>
   );
 };
