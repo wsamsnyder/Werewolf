@@ -7,15 +7,15 @@ import ChatRoom from './ChatRoom';
 
 const MainDiv = styled.div`
   display: grid;
-  grid-template: 1fr 2fr 1fr / 33% 33% 33%;
-  grid-gap: 20px;
+  grid-template: 20px 1fr 2fr 1fr / 33% 33% 33%;
+  grid-gap: 10px;
   position: absolute;
   width: 100%;
   height: 100%;
 `;
 
 const SplashScreenDiv = styled.div`
-  grid-row: 2;
+  grid-row: 3;
   grid-column: 2;
   display: grid;
   grid-template: 1fr 20% 1fr / 1fr 20% 20% 1fr;
@@ -27,9 +27,21 @@ const SplashScreenButton = styled.button`
   grid-row: 2;
 `;
 
+const GameId = styled.div`
+  grid-column: 2;
+  grid-row: 1;
+  text-align: center;
+`;
+
+// const StyledChatRoom = styled.ChatRoom`
+//   grid-column: 3;
+//   grid-row: 2;
+//   border-style: solid;
+// `;
+
 const App = () => {
-  const [town, setTown] = useState('');
   const username = 'sam';
+  const [town, setTown] = useState('');
   // const [username, setUsername] = useState('');
   const [sockets, setSockets] = useState([]);
   const [room, setRoom] = useState('');
@@ -62,7 +74,7 @@ const App = () => {
   };
 
 
-  const splashScreen = () => {
+  const render = () => {
     if (!town) {
       return (
         <SplashScreenDiv>
@@ -73,11 +85,17 @@ const App = () => {
     }
     return (
       <MainDiv>
-        <div>{room}</div>
+        <GameId>{room}</GameId>
+        {/* {
+          <ChatRoom
+
+          />
+        } */}
         {
-          sockets.map((roomData) => (
+          sockets.map((roomData, idx) => (
             <ChatRoom
               key={roomData.roomId}
+              location={idx}
               roomData={roomData}
             />
           ))
@@ -88,8 +106,7 @@ const App = () => {
 
   return (
     <MainDiv>
-      {splashScreen()}
-
+      {render()}
     </MainDiv>
   );
 };

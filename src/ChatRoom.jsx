@@ -7,13 +7,15 @@ import ChatMessage from './ChatMessage';
 
 const ChatRoomDiv = styled.div`
   // display: grid;
-  // grid-column: 1 / span 1;
+  grid-column: 3;
+  grid-row: ${(props) => props.location + 2};
   border-style: solid;
 `;
 
 
 // template for chatroom
-const ChatRoom = ({ roomData }) => {
+// I'm going to use 'location' to seperate out the divs
+const ChatRoom = ({ roomData, location }) => {
   const [messages, setMessages] = useState([]);
   const [socket, setSocket] = useState(null);
   const [newMessage, setNewMessage] = useState('');
@@ -48,7 +50,7 @@ const ChatRoom = ({ roomData }) => {
   };
 
   return (
-    <ChatRoomDiv>
+    <ChatRoomDiv location={location}>
       <div>
         {roomName}
       </div>
