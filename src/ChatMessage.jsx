@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 
 const ChatMessage = ({ username, message }) => (
   <div>
-    {username}:{message}
+    {username}
+    {': '}
+    {message}
   </div>
 
 );
