@@ -35,6 +35,10 @@ const ChatRoom = ({ roomData }) => {
     setNewMessage('');
   };
 
+  const keyPressed = (e) => {
+    if (e.key === 'Enter') sendMessage(e);
+  };
+
   return (
     <div>
       <div>
@@ -53,9 +57,17 @@ const ChatRoom = ({ roomData }) => {
       </div>
       <div>
         <form onSubmit={sendMessage}>
-          <label htmlFor="newMessage">
-            <input className="newMessage" type="text" value={newMessage} onChange={(e) => setNewMessage(e.target.value)} />
-          </label>
+          {/* <label htmlFor="newMessage"> */}
+          <textarea
+            className="newMessage"
+            type="text"
+            value={newMessage}
+            onSubmit={sendMessage}
+            // defaultValue="type message"
+            onChange={(e) => setNewMessage(e.target.value)}
+            onKeyPress={(e) => keyPressed(e)}
+          />
+          {/* </label> */}
           <input type="submit" value="Send" />
         </form>
       </div>
