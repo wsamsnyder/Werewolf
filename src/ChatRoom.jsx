@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import Socket from './sockets';
+import styled from 'styled-components';
 
+import Socket from './sockets';
 import ChatMessage from './ChatMessage';
+
+const ChatRoomDiv = styled.div`
+  // display: grid;
+  // grid-column: 1 / span 1;
+  border-style: solid;
+`;
+
 
 // template for chatroom
 const ChatRoom = ({ roomData }) => {
@@ -40,7 +48,10 @@ const ChatRoom = ({ roomData }) => {
   };
 
   return (
-    <div>
+    <ChatRoomDiv>
+      <div>
+        {roomName}
+      </div>
       <div>
         {
           messages.map((message, idx) => (
@@ -57,7 +68,6 @@ const ChatRoom = ({ roomData }) => {
       </div>
       <div>
         <form onSubmit={sendMessage}>
-          {/* <label htmlFor="newMessage"> */}
           <textarea
             className="newMessage"
             type="text"
@@ -67,11 +77,10 @@ const ChatRoom = ({ roomData }) => {
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyPress={(e) => keyPressed(e)}
           />
-          {/* </label> */}
           <input type="submit" value="Send" />
         </form>
       </div>
-    </div>
+    </ChatRoomDiv>
   );
 };
 
