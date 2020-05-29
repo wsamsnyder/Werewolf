@@ -7,14 +7,14 @@ import ChatMessage from './ChatMessage';
 
 const ChatRoomDiv = styled.div`
   grid-column: ${(props) => props.room === 'townsPeople' ? '1' : '3'};
-  grid-row: ${(props) => props.room === 'townsPeople' ? '2 / 5' : `${props.location + 2}`};
+  grid-row: ${(props) => props.room === 'townsPeople' || props.moderator === 'moderator' ? '2 / 5' : `${props.location + 2}`};
   border-style: solid;
 `;
 
 
 // template for chatroom
 // I'm going to use 'location' to seperate out the divs
-const ChatRoom = ({ roomData, location }) => {
+const ChatRoom = ({ roomData, location, moderator }) => {
   const [messages, setMessages] = useState([]);
   const [socket, setSocket] = useState(null);
   const [newMessage, setNewMessage] = useState('');
@@ -51,7 +51,7 @@ const ChatRoom = ({ roomData, location }) => {
   };
 
   return (
-    <ChatRoomDiv className={roomData.roomName} location={location} room={roomData.roomName}>
+    <ChatRoomDiv className={roomData.roomName} location={location} moderator={moderator}>
       <div>
         {roomName}
       </div>
@@ -92,6 +92,7 @@ const ChatRoom = ({ roomData, location }) => {
 ChatRoom.propTypes = {
   roomData: PropTypes.objectOf(PropTypes.string).isRequired,
   location: PropTypes.number.isRequired,
+  moderator: PropTypes.bool.isRequired,
 };
 
 export default ChatRoom;

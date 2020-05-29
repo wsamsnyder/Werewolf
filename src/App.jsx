@@ -42,12 +42,14 @@ const GameId = styled.div`
 const App = () => {
   const username = 'sam';
   const [town, setTown] = useState('');
-  // const [username, setUsername] = useState('');
+  const [moderator, setmoderator] = useState(false);
   const [sockets, setSockets] = useState([]);
   const [room, setRoom] = useState('');
 
   // make a new room with the namespace of the id returned
   const createGameRoom = () => {
+    setmoderator(true);
+
     api.createGameRoom('sam')
       .then(({ gameId, chatRooms }) => {
         setRoom(gameId);
@@ -105,6 +107,7 @@ const App = () => {
               key={roomData.roomId}
               location={idx}
               roomData={roomData}
+              moderator={moderator}
             />
           ))
         }
