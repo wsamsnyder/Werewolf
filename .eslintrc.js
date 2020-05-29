@@ -27,5 +27,6 @@ module.exports = {
     'no-plusplus': 'off',
     'no-underscore-dangle': 'off',
     'no-confusing-arrow': 'off',
+    'no-array-index-key': 'off',
   },
 };

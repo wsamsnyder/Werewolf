@@ -6,9 +6,8 @@ import Socket from './sockets';
 import ChatMessage from './ChatMessage';
 
 const ChatRoomDiv = styled.div`
-  // display: grid;
-  grid-column: ${(props) => props.roomId === 'townsPeople' ? '1' : '3'};
-  grid-row: ${(props) => props.roomId === 'townsPeople' ? '2 / 4' : `${props.location + 2}`};
+  grid-column: ${(props) => props.room === 'townsPeople' ? '1' : '3'};
+  grid-row: ${(props) => props.room === 'townsPeople' ? '2 / 5' : `${props.location + 2}`};
   border-style: solid;
 `;
 

@@ -95,6 +95,7 @@ const App = () => {
       <MainDiv>
         <GameId>{room}</GameId>
         <ChatRoom
+          className="town"
           location={0}
           roomData={town}
         />
