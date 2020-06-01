@@ -6,7 +6,6 @@ import Socket from './sockets';
 import ChatMessage from './ChatMessage';
 
 const ChatRoomDiv = styled.div`
-  className: ${(props) => props.className};
   grid-column: ${(props) => props.roomName === 'townsPeople' ? '1' : '3'};
   grid-row: ${(props) => props.roomName === 'townsPeople' || props.moderator === 'moderator' ? '2 / 5' : props.location + 2}};
   border-style: solid;
