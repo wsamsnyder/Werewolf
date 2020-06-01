@@ -1,78 +1,124 @@
 import React, { useState } from 'react';
-// import io from 'socket.io-client';
+import styled from 'styled-components';
 
-import Socket from './sockets';
+// import Socket from './sockets';
 import { api } from './lib';
-import ChatRoom from './chatRoom';
+import ChatRoom from './ChatRoom';
 
-// const socket = io.connect();
+const MainDiv = styled.div`
+  display: grid;
+  grid-template: 20px 1fr 2fr 1fr / 33% 33% 33%;
+  grid-gap: 10px;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+`;
 
-// socket.on('news', (data) => {
-//   console.log(data);
-//   socket.emit('my other event', { my: 'data' });
-// });
+const SplashScreenDiv = styled.div`
+  grid-row: 3;
+  grid-column: 2;
+  display: grid;
+  grid-template: 1fr 20% 1fr / 1fr 20% 20% 1fr;
+  grid-gap: 20px;
+`;
+
+const SplashScreenButton = styled.button`
+  grid-column: ${(props) => props.join ? 2 : 3};
+  grid-row: 2;
+`;
+
+const GameId = styled.div`
+  grid-column: 2;
+  grid-row: 1;
+  text-align: center;
+`;
+
+// const StyledChatRoom = styled.ChatRoom`
+//   grid-column: 3;
+//   grid-row: 2;
+//   border-style: solid;
+// `;
 
 const App = () => {
-  // these channels should be moved to the messaging module
-  const [townsPeopleChat, setTownsPeopleChat] = useState([]);
-  const [wolves, setWolvesChat] = useState([]);
-  const [doctor, setDoctorChat] = useState([]);
-  const [seer, setSeerChat] = useState([]);
-  const [sockets, setSockets] = useState({});
+  const username = 'sam';
+  const [town, setTown] = useState('');
+  const [moderator, setmoderator] = useState(false);
+  const [sockets, setSockets] = useState([]);
   const [room, setRoom] = useState('');
-  // let [townsPeopleChat, setTownsPeopleChat] = useState([]);
 
   // make a new room with the namespace of the id returned
   const createGameRoom = () => {
+    setmoderator(true);
+
     api.createGameRoom('sam')
       .then(({ gameId, chatRooms }) => {
         setRoom(gameId);
-        console.log(chatRooms);
-        chatRooms.forEach(({ roomName, roomId }) => {
-          if (roomName === 'townsPeople') {
-            const chat = new Socket(roomId, 'sam', roomId, gameId, roomName);
-            setSockets((allSockets) => ({ ...allSockets, townsPeople: chat }));
-            chat.joinNamespace((message) => (
-              setTownsPeopleChat((previousMessages) => [...previousMessages, message])
-            ));
-          }
-          if (roomName === 'wolves') {
-            const chat = new Socket(roomId, 'sam', roomId, gameId, roomName);
-            setSockets((allSockets) => ({ ...allSockets, wolves: chat }));
-            chat.joinNamespace((message) => (
-              setWolvesChat((previousMessages) => [...previousMessages, message])
-            ));
-          }
-          if (roomName === 'doctor') {
-            const chat = new Socket(roomId, 'sam', roomId, gameId, roomName);
-            setSockets((allSockets) => ({ ...allSockets, doctor: chat }));
-            chat.joinNamespace((message) => (
-              setDoctorChat((previousMessages) => [...previousMessages, message])
-            ));
-          }
-          if (roomName === 'seer') {
-            const chat = new Socket(roomId, 'sam', roomId, gameId, roomName);
-            setSockets((allSockets) => ({ ...allSockets, seer: chat }));
-            chat.joinNamespace((message) => (
-              setSeerChat((previousMessages) => [...previousMessages, message])
-            ));
-          }
+        const townRoomName = chatRooms[0].roomName;
+        const townRoomId = chatRooms[0].roomId;
+        setTown({
+          roomId: townRoomId,
+          username,
+          userId: townRoomId,
+          gameId,
+          roomName: townRoomName,
         });
+        const rooms = [];
+        for (let i = 1; i < chatRooms.length; i++) {
+          const { roomName, roomId } = chatRooms[i];
+          rooms.push({
+            roomId,
+            username,
+            userId: roomId,
+            gameId,
+            roomName,
+          });
+        }
+
+        setSockets(rooms);
       });
   };
 
-  const sendMessage = () => {
-    sockets.townsPeople.sendMessage('hello There');
+  const joinGameRoom = () => {
+    // not implemented atm
+    // api.joinGameRoom('sam');
+  };
+
+
+  const render = () => {
+    if (!town) {
+      return (
+        <SplashScreenDiv>
+          <SplashScreenButton join type="button" onClick={createGameRoom}>Create Room</SplashScreenButton>
+          <SplashScreenButton type="button" onClick={joinGameRoom}>Join Room</SplashScreenButton>
+        </SplashScreenDiv>
+      );
+    }
+    return (
+      <MainDiv>
+        <GameId>{room}</GameId>
+        <ChatRoom
+          className="town"
+          location={0}
+          roomData={town}
+        />
+        {
+          sockets.map((roomData, idx) => (
+            <ChatRoom
+              key={roomData.roomId}
+              location={idx}
+              roomData={roomData}
+              moderator={moderator}
+            />
+          ))
+        }
+      </MainDiv>
+    );
   };
 
   return (
-    <div>
-      <button type="button" onClick={createGameRoom}>Create Namespace</button>
-      <div>{townsPeopleChat}</div>
-      <div>{room}</div>
-      <ChatRoom roomName={sockets} />
-      <button type="button" onClick={sendMessage}>Send Message</button>
-    </div>
+    <MainDiv>
+      {render()}
+    </MainDiv>
   );
 };
 
