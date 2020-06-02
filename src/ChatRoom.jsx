@@ -78,7 +78,6 @@ const ChatRoom = ({ roomData, location, moderator }) => {
             type="text"
             value={newMessage}
             onSubmit={sendMessage}
-            // defaultValue="type message"
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyPress={(e) => keyPressed(e)}
           />
