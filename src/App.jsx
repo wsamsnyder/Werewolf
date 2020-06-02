@@ -61,6 +61,10 @@ const App = () => {
 
   const joinGameRoom = (newUsername, roomId) => {
     // send user information to the server
+    api.joinGameRoom(newUsername, roomId)
+      .then((chatRooms) => {
+        console.log(chatRooms);
+      });
     // add the sockets to the chats
     // set town room data
     // set the username

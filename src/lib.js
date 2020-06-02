@@ -15,5 +15,5 @@ exports.api = {
     },
     body: JSON.stringify({ username, roomID }),
   })
-    .then((response) => console.log(response.json())),
+    .then((response) => response.json()),
 };
