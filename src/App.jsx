@@ -67,8 +67,8 @@ const App = () => {
   };
 
 
-  const render = () => {
-    if (!isLoggedIn) {
+  const render = (loggedIn) => {
+    if (!loggedIn) {
       return (
         <Login
           joinGameRoom={joinGameRoom}
@@ -103,7 +103,7 @@ const App = () => {
 
   return (
     <MainDiv>
-      {render()}
+      {render(isLoggedIn)}
     </MainDiv>
   );
 };
