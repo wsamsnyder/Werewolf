@@ -88,8 +88,6 @@ const ChatRoom = ({ roomData, location, moderator }) => {
   );
 };
 
-// need to do props validation
-
 ChatRoom.propTypes = {
   roomData: PropTypes.objectOf(PropTypes.string).isRequired,
   location: PropTypes.number.isRequired,
