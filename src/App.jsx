@@ -25,13 +25,10 @@ const App = () => {
   const [sockets, setSockets] = useState([]);
   const [room, setRoom] = useState('');
   const [moderator, setModerator] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  let username = '';
+  const [username, setUsername] = useState('');
 
   // make a new room with the namespace of the id returned
   const createGameRoom = (newUsername) => {
-    username = newUsername;
     api.createGameRoom(username)
       .then(({ gameId, chatRooms }) => {
         setRoom(gameId);
@@ -39,7 +36,7 @@ const App = () => {
         const townRoomId = chatRooms[0].roomId;
         setTown({
           roomId: townRoomId,
-          username,
+          username: newUsername,
           userId: townRoomId,
           gameId,
           roomName: townRoomName,
@@ -50,13 +47,13 @@ const App = () => {
           const { roomName, roomId } = chatRooms[i];
           rooms.push({
             roomId,
-            username,
+            username: newUsername,
             userId: roomId,
             gameId,
             roomName,
           });
         }
-        setIsLoggedIn(true);
+        setUsername(newUsername);
         setModerator(true);
         setSockets(rooms);
       });
@@ -66,13 +63,13 @@ const App = () => {
     // send user information to the server
     // add the sockets to the chats
     // set town room data
-    //
+    // set the username
     console.log('loggin here', newUsername, roomId);
   };
 
 
-  const render = (loggedIn) => {
-    if (!loggedIn) {
+  const render = (usernameIsEmtpy) => {
+    if (!usernameIsEmtpy) {
       return (
         <Login
           joinGameRoom={joinGameRoom}
@@ -107,7 +104,7 @@ const App = () => {
 
   return (
     <MainDiv>
-      {render(isLoggedIn)}
+      {render(username)}
     </MainDiv>
   );
 };

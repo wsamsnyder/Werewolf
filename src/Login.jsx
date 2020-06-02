@@ -65,37 +65,35 @@ const Login = ({ createGameRoom, joinGameRoom }) => {
         </>
       );
     }
-    if (createOrJoin === 'join') {
-      return (
-        <>
-          <JoinRoomDiv>
-            <form onSubmit={joinRoom}>
-              <label htmlFor="createOrJoinRoomID">
-                Room ID:
-                <input
-                  className="createOrJoinRoomID"
-                  type="text"
-                  value={roomToJoin}
-                  onChange={(e) => setRoomToJoin(e.target.value)}
-                  required
-                />
-              </label>
-              <label htmlFor="createOrJoinRoomUsername">
-                Username:
-                <input
-                  className="createOrJoinRoomUsername"
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  required
-                />
-              </label>
-              <input type="submit" value="Join" />
-            </form>
-          </JoinRoomDiv>
-        </>
-      );
-    }
+    return (
+      <>
+        <JoinRoomDiv>
+          <form onSubmit={joinRoom}>
+            <label htmlFor="createOrJoinRoomID">
+              Room ID:
+              <input
+                className="createOrJoinRoomID"
+                type="text"
+                value={roomToJoin}
+                onChange={(e) => setRoomToJoin(e.target.value)}
+                required
+              />
+            </label>
+            <label htmlFor="createOrJoinRoomUsername">
+              Username:
+              <input
+                className="createOrJoinRoomUsername"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+              />
+            </label>
+            <input type="submit" value="Join" />
+          </form>
+        </JoinRoomDiv>
+      </>
+    );
   };
 
   return (
