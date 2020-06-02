@@ -12,13 +12,18 @@ class Socket {
 
   joinNamespace(callback) {
     this.namespace = io.connect(`/${this.namespaceId}`);
-
+    console.log('attempting to join channel: ', this.chatRoom);
     this.namespace.on('connect', () => {
+      console.log('connected');
       this.namespace.emit('firstConnection', this.username, this.userId, this.gameId, this.chatRoom);
     });
 
     this.namespace.on('message', (message) => {
       callback(message);
+    });
+
+    this.namespace.on('disconnect', (message) => {
+      console.log('disconnected');
     });
   }
 

@@ -29,17 +29,18 @@ const App = () => {
 
   // make a new room with the namespace of the id returned
   const createGameRoom = (newUsername) => {
-    api.createGameRoom(username)
+    api.createGameRoom(newUsername)
       .then(({ gameId, chatRooms }) => {
         setRoom(gameId);
-        const townRoomName = chatRooms[0].roomName;
-        const townRoomId = chatRooms[0].roomId;
+        console.log(chatRooms);
+        // const townRoomName = chatRooms[0].roomName;
+        let { roomId } = chatRooms[0];
         setTown({
-          roomId: townRoomId,
+          roomId: gameId,
           username: newUsername,
-          userId: townRoomId,
+          userId: roomId,
           gameId,
-          roomName: townRoomName,
+          roomName: 'townsPeople',
         });
         // could push to state each time but component should only render once to avoid conflicts
         const rooms = [];

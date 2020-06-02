@@ -38,6 +38,7 @@ const createNamespace = (namespaceId) => {
               validSocketIds[socket.id] = true;
               namespace.emit('message', { username, message: ' has joined!' });
             } else {
+              console.log('player is invalid');
               socket.disconnect();
             }
           });
@@ -55,7 +56,6 @@ const createNamespace = (namespaceId) => {
 
 app.post('/joinNamespace', (req, res) => {
   const { username, roomId } = req.body;
-  console.log(username, roomId);
   db.joinGame(username, roomId)
     .then((townsPersonId) => {
       res.status(201).json(townsPersonId);
@@ -68,6 +68,7 @@ app.post('/joinNamespace', (req, res) => {
 
 app.post('/createNamespace', (req, res) => {
   const { moderator } = req.body;
+  console.log('moderator', moderator);
 
   // needs to create the socket for the room
   db.createRoom(moderator)
@@ -78,8 +79,9 @@ app.post('/createNamespace', (req, res) => {
       doctor,
       seer,
     }) => {
+
       // console.log(_id, wolves[0], doctor[0], seer[0], townsPeople[0]);
-      const channels = [townsPeople, wolves, doctor, seer];
+      const channels = [[{ _id }], wolves, doctor, seer];
       channels.forEach((channel) => {
         createNamespace(channel[0]._id);
       });
@@ -89,7 +91,7 @@ app.post('/createNamespace', (req, res) => {
         {
           gameId: _id,
           chatRooms: [
-            { roomName: 'townsPeople', roomId: _id },
+            { roomName: 'townsPeople', roomId: townsPeople[0]._id },
             { roomName: 'wolves', roomId: wolves[0]._id },
             { roomName: 'doctor', roomId: doctor[0]._id },
             { roomName: 'seer', roomId: seer[0]._id },
