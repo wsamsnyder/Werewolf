@@ -7,4 +7,13 @@ exports.api = {
     body: JSON.stringify({ moderator }),
   })
     .then((response) => response.json()),
+
+  joinGameRoom: (username, roomID) => fetch('/joinNamespace', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ username, roomID }),
+  })
+    .then((response) => console.log(response.json())),
 };
