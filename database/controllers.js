@@ -73,7 +73,6 @@ exports.db = {
       .then((gameRoom) => {
         const room = gameRoom[chatRoom];
         for (let i = 0; i < room.length; i++) {
-          console.log('ppl in the room: ', room[i]._id, 'userId: ', userId);
           if (room[i]._id.toString() === userId && room[i].socketId === undefined) {
             room[i].socketId = socketId;
             return gameRoom.save()

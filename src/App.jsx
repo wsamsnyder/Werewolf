@@ -25,32 +25,22 @@ const App = () => {
   const [sockets, setSockets] = useState([]);
   const [room, setRoom] = useState('');
   const [moderator, setModerator] = useState(false);
-<<<<<<< HEAD
   const [username, setUsername] = useState('');
 
   // make a new room with the namespace of the id returned
   const createGameRoom = (newUsername) => {
     api.createGameRoom(newUsername)
-=======
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  // make a new room with the namespace of the id returned
-  const createGameRoom = () => {
-    console.log('create');
-
-    api.createGameRoom('sam')
->>>>>>> d5006dd0c827c48a82caec53c144848a9282568c
       .then(({ gameId, chatRooms }) => {
         setRoom(gameId);
         console.log(chatRooms);
-        // const townRoomName = chatRooms[0].roomName;
+        const townRoomName = chatRooms[0].roomName;
         let { roomId } = chatRooms[0];
         setTown({
           roomId: gameId,
           username: newUsername,
           userId: roomId,
           gameId,
-          roomName: 'townsPeople',
+          roomName: townRoomName,
         });
         // could push to state each time but component should only render once to avoid conflicts
         const rooms = [];
@@ -64,17 +54,12 @@ const App = () => {
             roomName,
           });
         }
-<<<<<<< HEAD
         setUsername(newUsername);
-=======
-        setIsLoggedIn(true);
->>>>>>> d5006dd0c827c48a82caec53c144848a9282568c
         setModerator(true);
         setSockets(rooms);
       });
   };
 
-<<<<<<< HEAD
   const joinGameRoom = (newUsername, roomId) => {
     // send user information to the server
     api.joinGameRoom(newUsername, roomId)
@@ -94,15 +79,6 @@ const App = () => {
 
   const render = (usernameIsEmtpy) => {
     if (!usernameIsEmtpy) {
-=======
-  const joinGameRoom = () => {
-    console.log('loggin here');
-  };
-
-
-  const render = () => {
-    if (!isLoggedIn) {
->>>>>>> d5006dd0c827c48a82caec53c144848a9282568c
       return (
         <Login
           joinGameRoom={joinGameRoom}

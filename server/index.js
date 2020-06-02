@@ -22,6 +22,7 @@ app.use(express.json());
 // takes in the roomID and creates socket listeners
 // I want to factor this out to it's own file
 const createNamespace = (namespaceId) => {
+  console.log(namespaceId);
   const namespace = io
     .of(`/${namespaceId}`)
     .on('connection', (socket) => {
@@ -81,7 +82,7 @@ app.post('/createNamespace', (req, res) => {
     }) => {
 
       // console.log(_id, wolves[0], doctor[0], seer[0], townsPeople[0]);
-      const channels = [[{ _id }], wolves, doctor, seer];
+      const channels = [[{ _id }], townsPeople, wolves, doctor, seer];
       channels.forEach((channel) => {
         createNamespace(channel[0]._id);
       });

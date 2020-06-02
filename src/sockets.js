@@ -22,8 +22,8 @@ class Socket {
       callback(message);
     });
 
-    this.namespace.on('disconnect', (message) => {
-      console.log('disconnected');
+    this.namespace.on('disconnect', () => {
+      callback({ username: this.username, message: 'has disconnected' });
     });
   }
 

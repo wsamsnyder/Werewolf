@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 import React, { useState } from 'react';
-=======
-import React from 'react';
->>>>>>> d5006dd0c827c48a82caec53c144848a9282568c
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
@@ -19,7 +15,6 @@ const SplashScreenButton = styled.button`
   grid-row: 2;
 `;
 
-<<<<<<< HEAD
 const JoinRoomDiv = styled.div`
   grid-row: 2 / span 2;
   grid-column: 2 / span 2;
@@ -104,19 +99,6 @@ const Login = ({ createGameRoom, joinGameRoom }) => {
   return (
     <SplashScreenDiv>
       { render(createOrJoin) }
-=======
-const Login = ({ createGameRoom, joinGameRoom }) => {
-
-
-  const render = () => {
-
-  }
-
-  return (
-    <SplashScreenDiv>
-      <SplashScreenButton join type="button" onClick={createGameRoom}>Create Room</SplashScreenButton>
-      <SplashScreenButton type="button" onClick={joinGameRoom}>Join Room</SplashScreenButton>
->>>>>>> d5006dd0c827c48a82caec53c144848a9282568c
     </SplashScreenDiv>
   );
 };
