@@ -62,13 +62,17 @@ const App = () => {
   const joinGameRoom = (newUsername, roomId) => {
     // send user information to the server
     api.joinGameRoom(newUsername, roomId)
-      .then((chatRooms) => {
-        console.log(chatRooms);
+      .then((townsPersonId) => {
+        setTown({
+          roomId,
+          username: newUsername,
+          userId: townsPersonId,
+          gameId: roomId,
+          roomName: 'townsPeople',
+        });
+        setUsername(newUsername);
+        console.log(townsPersonId);
       });
-    // add the sockets to the chats
-    // set town room data
-    // set the username
-    console.log('loggin here', newUsername, roomId);
   };
 
 

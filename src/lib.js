@@ -8,12 +8,12 @@ exports.api = {
   })
     .then((response) => response.json()),
 
-  joinGameRoom: (username, roomID) => fetch('/joinNamespace', {
+  joinGameRoom: (username, roomId) => fetch('/joinNamespace', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ username, roomID }),
+    body: JSON.stringify({ username, roomId }),
   })
     .then((response) => response.json()),
 };

@@ -29,7 +29,7 @@ const createNamespace = (namespaceId) => {
 
       socket.on('firstConnection', (username, userId, gameId, roomName) => {
         // see if the player's userId is already in the db w/socketId. reject the connection if true
-        console.log('on first connection')
+        console.log('on first connection');
         const socketId = socket.id.split('#')[1];
         db.validatePlayer(userId, gameId, roomName, socketId)
           .then((isValidPlayer) => {
@@ -52,6 +52,19 @@ const createNamespace = (namespaceId) => {
       });
     });
 };
+
+app.post('/joinNamespace', (req, res) => {
+  const { username, roomId } = req.body;
+  console.log(username, roomId);
+  db.joinGame(username, roomId)
+    .then((townsPersonId) => {
+      res.status(201).json(townsPersonId);
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500);
+    });
+});
 
 app.post('/createNamespace', (req, res) => {
   const { moderator } = req.body;
@@ -76,7 +89,7 @@ app.post('/createNamespace', (req, res) => {
         {
           gameId: _id,
           chatRooms: [
-            { roomName: 'townsPeople', roomId: townsPeople[0]._id },
+            { roomName: 'townsPeople', roomId: _id },
             { roomName: 'wolves', roomId: wolves[0]._id },
             { roomName: 'doctor', roomId: doctor[0]._id },
             { roomName: 'seer', roomId: seer[0]._id },
@@ -85,7 +98,8 @@ app.post('/createNamespace', (req, res) => {
       );
     })
     .catch((error) => {
-      res.status(500).json(error);
+      console.log(error);
+      res.status(500);
     });
 });
 

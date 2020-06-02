@@ -14,9 +14,22 @@ exports.db = {
     return newRoom.save();
   },
 
-  // joinGame: (name, socketId, gameId) => {
-
-  // },
+  joinGame: (username, gameId) => (
+    Room.findById(gameId)
+      .then((gameRoom) => {
+        gameRoom.townsPeople.push({ username });
+        return gameRoom.save()
+          .then((updatedTown) => {
+            const { townsPeople } = updatedTown;
+            for (let i = 0; i < townsPeople.length; i++) {
+              if (townsPeople[i].username === username) {
+                return townsPeople[i]._id;
+              }
+            }
+            return null;
+          });
+      })
+  ),
 
   // rename to 'start game'
   startGame: (gameId) => {
