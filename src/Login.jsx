@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
@@ -15,17 +15,59 @@ const SplashScreenButton = styled.button`
   grid-row: 2;
 `;
 
-const Login = ({ createGameRoom, joinGameRoom }) => {
+const JoinRoomDiv = styled.div`
+  grid-row: 2 / span 2;
+  grid-column: 2 / span 2;
+`;
 
+const Login = ({ createGameRoom, joinGameRoom }) => {
+  const [createOrJoin, setCreateOrJoin] = useState(null);
+  const [roomToJoin, setRoomToJoin] = useState('');
+  const [userName, setUserName] = useState('');
+
+  const joinRoom = (e) => {
+    e.preventDefault();
+  };
+
+  const joinRoomButton = () => {
+    setCreateOrJoin('join');
+  };
 
   const render = () => {
-
-  }
+    if (createOrJoin === null) {
+      return (
+        <>
+          <SplashScreenButton join type="button" onClick={createGameRoom}>Create Room</SplashScreenButton>
+          <SplashScreenButton type="button" onClick={joinRoomButton}>Join Room</SplashScreenButton>
+        </>
+      );
+    }
+    if (createOrJoin === 'join') {
+      return (
+        <>
+          <JoinRoomDiv>
+            <form onSubmit={joinRoom}>
+              <label htmlFor="createOrJoinRoomID">
+                Room ID:
+                <input
+                  className="createOrJoinRoomID"
+                  type="text"
+                  value={roomToJoin}
+                  onChange={(e) => setRoomToJoin(e.target.value)}
+                  required
+                />
+              </label>
+              <input type="submit" value="Join" />
+            </form>
+          </JoinRoomDiv>
+        </>
+      );
+    }
+  };
 
   return (
     <SplashScreenDiv>
-      <SplashScreenButton join type="button" onClick={createGameRoom}>Create Room</SplashScreenButton>
-      <SplashScreenButton type="button" onClick={joinGameRoom}>Join Room</SplashScreenButton>
+      { render(createOrJoin) }
     </SplashScreenDiv>
   );
 };
