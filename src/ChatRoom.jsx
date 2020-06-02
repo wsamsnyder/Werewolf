@@ -21,8 +21,6 @@ const ChatRoom = ({ roomData, location, moderator }) => {
   // doesn't need to be in state
   const [socket, setSocket] = useState(null);
 
-  console.log('roomName: ', roomData.roomName);
-
   const {
     roomId,
     username = 'sam',

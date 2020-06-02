@@ -23,22 +23,45 @@ const JoinRoomDiv = styled.div`
 const Login = ({ createGameRoom, joinGameRoom }) => {
   const [createOrJoin, setCreateOrJoin] = useState(null);
   const [roomToJoin, setRoomToJoin] = useState('');
-  const [userName, setUserName] = useState('');
+  const [username, setUsername] = useState('');
 
   const joinRoom = (e) => {
     e.preventDefault();
+    joinGameRoom(username, roomToJoin);
   };
 
-  const joinRoomButton = () => {
-    setCreateOrJoin('join');
+  const createRoom = (e) => {
+    e.preventDefault();
+    createGameRoom(username);
   };
 
   const render = () => {
     if (createOrJoin === null) {
       return (
         <>
-          <SplashScreenButton join type="button" onClick={createGameRoom}>Create Room</SplashScreenButton>
-          <SplashScreenButton type="button" onClick={joinRoomButton}>Join Room</SplashScreenButton>
+          <SplashScreenButton join type="button" onClick={() => setCreateOrJoin('create')}>Create Room</SplashScreenButton>
+          <SplashScreenButton type="button" onClick={() => setCreateOrJoin('join')}>Join Room</SplashScreenButton>
+        </>
+      );
+    }
+    if (createOrJoin === 'create') {
+      return (
+        <>
+          <JoinRoomDiv>
+            <form onSubmit={createRoom}>
+              <label htmlFor="createOrJoinRoomUsername">
+                Username:
+                <input
+                  className="createOrJoinRoomUsername"
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                />
+              </label>
+              <input type="submit" value="Join" />
+            </form>
+          </JoinRoomDiv>
         </>
       );
     }
@@ -54,6 +77,16 @@ const Login = ({ createGameRoom, joinGameRoom }) => {
                   type="text"
                   value={roomToJoin}
                   onChange={(e) => setRoomToJoin(e.target.value)}
+                  required
+                />
+              </label>
+              <label htmlFor="createOrJoinRoomUsername">
+                Username:
+                <input
+                  className="createOrJoinRoomUsername"
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                   required
                 />
               </label>

@@ -21,18 +21,18 @@ const GameId = styled.div`
 `;
 
 const App = () => {
-  const username = 'sam';
   const [town, setTown] = useState('');
   const [sockets, setSockets] = useState([]);
   const [room, setRoom] = useState('');
   const [moderator, setModerator] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // make a new room with the namespace of the id returned
-  const createGameRoom = () => {
-    console.log('create');
+  let username = '';
 
-    api.createGameRoom('sam')
+  // make a new room with the namespace of the id returned
+  const createGameRoom = (newUsername) => {
+    username = newUsername;
+    api.createGameRoom(username)
       .then(({ gameId, chatRooms }) => {
         setRoom(gameId);
         const townRoomName = chatRooms[0].roomName;
@@ -62,8 +62,12 @@ const App = () => {
       });
   };
 
-  const joinGameRoom = () => {
-    console.log('loggin here');
+  const joinGameRoom = (newUsername, roomId) => {
+    // send user information to the server
+    // add the sockets to the chats
+    // set town room data
+    //
+    console.log('loggin here', newUsername, roomId);
   };
 
 
