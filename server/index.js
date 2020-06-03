@@ -21,7 +21,7 @@ app.use(express.json());
 
 // takes in the roomID and creates socket listeners
 // I want to factor this out to it's own file
-const createNamespace = (namespaceId) => {
+const createChatRooms = (namespaceId) => {
   console.log(namespaceId);
   const namespace = io
     .of(`/${namespaceId}`)
@@ -80,13 +80,11 @@ app.post('/createNamespace', (req, res) => {
       doctor,
       seer,
     }) => {
-
       // console.log(_id, wolves[0], doctor[0], seer[0], townsPeople[0]);
       const channels = [[{ _id }], townsPeople, wolves, doctor, seer];
       channels.forEach((channel) => {
-        createNamespace(channel[0]._id);
+        createChatRooms(channel[0]._id);
       });
-
 
       res.status(201).json(
         {
