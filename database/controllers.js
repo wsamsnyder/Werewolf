@@ -4,7 +4,7 @@ exports.db = {
   // rename to create game
   createRoom: (name) => {
     const newRoom = new Room({
-      mod: name,
+      moderator: { username: name },
       wolves: [{ username: name }],
       doctor: [{ username: name }],
       seer: [{ username: name }],
@@ -14,18 +14,30 @@ exports.db = {
     return newRoom.save();
   },
 
+  // returns a Promise that resolves with null if the username is already taken
+  // or the town chat's namespace and the new towns persons id
   joinGame: (username, gameId) => (
     Room.findById(gameId)
       .then((gameRoom) => {
         gameRoom.townsPeople.push({ username });
+        gameRoom.allPlayers.push({ username });
+
         return gameRoom.save()
           .then((updatedTown) => {
-            const { townsPeople } = updatedTown;
+            const { townsPeople, moderator } = updatedTown;
+            const modUsername = moderator.username;
+
+            let townRoomId;
+            let townsPersonId;
             for (let i = 0; i < townsPeople.length; i++) {
-              if (townsPeople[i].username === username) {
-                return townsPeople[i]._id;
+              if (townsPeople[i].username === username && townsPeople[i].socketId === undefined) {
+                townsPersonId = townsPeople[i]._id;
+              }
+              if (townsPeople[i].username === modUsername) {
+                townRoomId = townsPeople[i]._id;
               }
             }
+            if (townRoomId && townsPersonId) return { townRoomId, townsPersonId };
             return null;
           });
       })
@@ -68,6 +80,8 @@ exports.db = {
     });
   },
 
+  // verifies that a player belongs in a specific room and has not connected
+  // on the namespace before
   validatePlayer: (userId, gameId, chatRoom, socketId) => (
     Room.findById(gameId)
       .then((gameRoom) => {
@@ -82,4 +96,16 @@ exports.db = {
         return false;
       })
   ),
+
+  validateModerator: ((gameId, socketId) => {
+    Room.findById(gameId)
+      .then((gameRoom) => {
+        const { moderator } = gameRoom;
+        if (moderator._id === gameId && moderator.socketId === undefined) {
+          moderator.socketId = socketId;
+          return true;
+        }
+        return false;
+      });
+  }),
 };
