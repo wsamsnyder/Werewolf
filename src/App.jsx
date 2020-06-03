@@ -22,22 +22,25 @@ const GameId = styled.div`
 
 const App = () => {
   const [town, setTown] = useState('');
-  const [sockets, setSockets] = useState([]);
+  const [chatSockets, setChatSockets] = useState([]);
   const [room, setRoom] = useState('');
   const [moderator, setModerator] = useState(false);
-  const [username, setUsername] = useState('');
+
+  let username;
 
   // make a new room with the namespace of the id returned
   const createGameRoom = (newUsername) => {
-    api.createGameRoom(newUsername)
+    username = newUsername;
+    api.createGameRoom(username)
       .then(({ gameId, townChat, otherChats }) => {
         setRoom(gameId);
+
         // connect to commandRoom
 
         const { townId, townName } = townChat;
         setTown({
           roomId: townId,
-          username: newUsername,
+          username,
           userId: townId,
           gameId,
           roomName: townName,
@@ -47,37 +50,36 @@ const App = () => {
         otherChats.forEach(({ roomName, roomId }) => {
           rooms.push({
             roomId,
-            username: newUsername,
+            username,
             userId: roomId,
             gameId,
             roomName,
           });
         });
-
-        setUsername(newUsername);
         setModerator(true);
-        setSockets(rooms);
+        setChatSockets(rooms);
       });
   };
 
   const joinGameRoom = (newUsername, roomId) => {
+    username = newUsername;
+
     // send user information to the server
     api.joinGameRoom(newUsername, roomId)
-      .then((townsPersonId) => {
+      .then(({ townRoomId, townsPersonId }) => {
         setTown({
-          roomId,
-          username: newUsername,
+          roomId: townRoomId,
+          username,
           userId: townsPersonId,
           gameId: roomId,
           roomName: 'townsPeople',
         });
-        setUsername(newUsername);
-        console.log(townsPersonId);
+        setRoom(roomId);
       });
   };
 
-  const render = (usernameIsEmtpy) => {
-    if (!usernameIsEmtpy) {
+  const render = (townToJoin) => {
+    if (!townToJoin) {
       return (
         <Login
           joinGameRoom={joinGameRoom}
@@ -85,7 +87,7 @@ const App = () => {
         />
       );
     }
-    // I think that this will take care of itself? is sockets is empty, nothing will render
+    // I think that this will take care of itself? is ChatSockets is empty, nothing will render
     // when one is added, it should render and if my conditionals are correct
     // it'll take the whole right side
     return (
@@ -97,7 +99,7 @@ const App = () => {
           moderator={moderator}
         />
         {
-          sockets.map((roomData, idx) => (
+          chatSockets.map((roomData, idx) => (
             <ChatRoom
               key={roomData.roomId}
               location={idx}
@@ -112,7 +114,7 @@ const App = () => {
 
   return (
     <MainDiv>
-      {render(username)}
+      {render(town)}
     </MainDiv>
   );
 };
