@@ -125,8 +125,8 @@ app.post('/createNamespace', (req, res) => {
         {
           gameId: _id,
           modId: moderator._id,
-          chatRooms: [
-            { roomName: 'townsPeople', roomId: townsPeople[0]._id },
+          townChat: { townName: 'townsPeople', townId: townsPeople[0]._id },
+          otherChats: [
             { roomName: 'wolves', roomId: wolves[0]._id },
             { roomName: 'doctor', roomId: doctor[0]._id },
             { roomName: 'seer', roomId: seer[0]._id },
