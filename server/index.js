@@ -100,10 +100,11 @@ const createCommandRoom = (namespaceId) => {
     });
 };
 
+// returns moderatorId as namespaceIds for townsPeople, wolves
+// doctor and seer. gameId = commandRoomId. modId used for verification.
 app.post('/createNamespace', (req, res) => {
   const { modUsername } = req.body;
 
-  // needs to create the socket for the room
   db.createRoom(modUsername)
     .then(({
       _id,
@@ -113,8 +114,9 @@ app.post('/createNamespace', (req, res) => {
       doctor,
       seer,
     }) => {
-      // console.log(_id, wolves[0], doctor[0], seer[0], townsPeople[0]);
-      const channels = [[{ _id }], townsPeople, wolves, doctor, seer];
+      createCommandRoom(_id);
+
+      const channels = [townsPeople, wolves, doctor, seer];
       channels.forEach((channel) => {
         createChatRooms(channel[0]._id);
       });
