@@ -1,10 +1,10 @@
 exports.api = {
-  createGameRoom: (moderator) => fetch('/createNamespace', {
+  createGameRoom: (modUsername) => fetch('/createNamespace', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ moderator }),
+    body: JSON.stringify({ modUsername }),
   })
     .then((response) => response.json()),
 

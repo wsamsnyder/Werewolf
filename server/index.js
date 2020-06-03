@@ -50,16 +50,49 @@ const createCommandRoom = (namespaceId) => {
     .of(`/${namespaceId}`)
     .on('connection', (socket) => {
       let moderator;
-      const Timer =
+      const timer = new Timer();
 
-      socket.on('firstConnection', (userId, gameId) => {
-        // see if the player's userId is already in the db w/socketId. reject the connection if true
-        if (!moderator) moderator = socket.id;
+      // if there isn't a mod already, verifies before setting to moderator
+      socket.on('firstConnection', (gameId) => {
+        if (!moderator) {
+          db.validatePlayer(gameId, socket.id)
+            .then((isModerator) => {
+              if (isModerator) {
+                moderator = socket.id;
+              } else {
+                socket.disconnect();
+              }
+            });
+        }
       });
 
-      socket.on('message', (messageObj) => {
-        if (validSocketIds[socket.id]) {
-          namespace.emit('message', messageObj);
+      socket.on('startTime', () => {
+        if (socket.id === moderator) {
+          timer.start((time) => namespace.emit('time', time));
+        } else {
+          socket.disconnect();
+        }
+      });
+
+      socket.on('setTime', (amountOfTime) => {
+        if (socket.id === moderator) {
+          timer.set(amountOfTime);
+        } else {
+          socket.disconnect();
+        }
+      });
+
+      socket.on('stopTime', () => {
+        if (socket.id === moderator) {
+          timer.stop();
+        } else {
+          socket.disconnect();
+        }
+      });
+
+      socket.on('addTime', (additionalTime) => {
+        if (socket.id === moderator) {
+          timer.add(additionalTime);
         } else {
           socket.disconnect();
         }
@@ -68,13 +101,13 @@ const createCommandRoom = (namespaceId) => {
 };
 
 app.post('/createNamespace', (req, res) => {
-  const { moderator } = req.body;
-  console.log('moderator', moderator);
+  const { modUsername } = req.body;
 
   // needs to create the socket for the room
-  db.createRoom(moderator)
+  db.createRoom(modUsername)
     .then(({
       _id,
+      moderator,
       townsPeople,
       wolves,
       doctor,
@@ -89,6 +122,7 @@ app.post('/createNamespace', (req, res) => {
       res.status(201).json(
         {
           gameId: _id,
+          modId: moderator._id,
           chatRooms: [
             { roomName: 'townsPeople', roomId: townsPeople[0]._id },
             { roomName: 'wolves', roomId: wolves[0]._id },
