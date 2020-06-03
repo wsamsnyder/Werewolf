@@ -1,7 +1,7 @@
 import io from 'socket.io-client';
 
 // joins namespace and the townspeople chat
-class Socket {
+class Chat {
   constructor(namespaceId, username, userId, gameId, chatRoom) {
     this.namespaceId = namespaceId;
     this.username = username;
@@ -12,9 +12,7 @@ class Socket {
 
   joinNamespace(callback) {
     this.namespace = io.connect(`/${this.namespaceId}`);
-    console.log('attempting to join channel: ', this.chatRoom);
     this.namespace.on('connect', () => {
-      console.log('connected');
       this.namespace.emit('firstConnection', this.username, this.userId, this.gameId, this.chatRoom);
     });
 
@@ -32,4 +30,4 @@ class Socket {
   }
 }
 
-export default Socket;
+export default Chat;
