@@ -2,27 +2,18 @@ require('dotenv').config();
 const express = require('express');
 
 const app = express();
-
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
-
 const { db } = require('../database/controllers');
 
 const port = process.env.SERVER_PORT;
 
-// not sure if these will be needed once Sockets are in place
 app.use(express.static('public'));
 app.use(express.json());
-// app.use(express.urlencoded({ extended: true }));
-
-// const removeSocket = (namespaceId, socketId) => {
-//   io.of(namespaceId).
-// };
 
 // takes in the roomID and creates socket listeners
 // I want to factor this out to it's own file
 const createChatRooms = (namespaceId) => {
-  console.log(namespaceId);
   const namespace = io
     .of(`/${namespaceId}`)
     .on('connection', (socket) => {
@@ -30,14 +21,12 @@ const createChatRooms = (namespaceId) => {
 
       socket.on('firstConnection', (username, userId, gameId, roomName) => {
         // see if the player's userId is already in the db w/socketId. reject the connection if true
-        console.log('on first connection');
         const socketId = socket.id.split('#')[1];
         db.validatePlayer(userId, gameId, roomName, socketId)
           .then((isValidPlayer) => {
-            console.log(isValidPlayer);
             if (isValidPlayer) {
               validSocketIds[socket.id] = true;
-              namespace.emit('message', { username, message: ' has joined!' });
+              namespace.emit('message', { username, message: 'joined!' });
             } else {
               console.log('player is invalid');
               socket.disconnect();
@@ -55,17 +44,39 @@ const createChatRooms = (namespaceId) => {
     });
 };
 
-app.post('/joinNamespace', (req, res) => {
-  const { username, roomId } = req.body;
-  db.joinGame(username, roomId)
-    .then((townsPersonId) => {
-      res.status(201).json(townsPersonId);
-    })
-    .catch((error) => {
-      console.log(error);
-      res.status(500);
+// room that time and other mod commands will go through
+const createCommandRoom = (namespaceId) => {
+  // ensure the
+  const namespace = io
+    .of(`/${namespaceId}`)
+    .on('connection', (socket) => {
+      let moderator;
+
+      socket.on('firstConnection', (userId, gameId) => {
+        // see if the player's userId is already in the db w/socketId. reject the connection if true
+        const socketId = socket.id.split('#')[1];
+        db.validatePlayer(userId, gameId, roomName, socketId)
+          .then((isValidPlayer) => {
+
+            // if (isValidPlayer) {
+            //   validSocketIds[socket.id] = true;
+            //   namespace.emit('message', { username, message: 'joined!' });
+            // } else {
+            //   console.log('player is invalid');
+            //   socket.disconnect();
+            // }
+          });
+      });
+
+      socket.on('message', (messageObj) => {
+        if (validSocketIds[socket.id]) {
+          namespace.emit('message', messageObj);
+        } else {
+          socket.disconnect();
+        }
+      });
     });
-});
+};
 
 app.post('/createNamespace', (req, res) => {
   const { moderator } = req.body;
@@ -104,6 +115,19 @@ app.post('/createNamespace', (req, res) => {
     });
 });
 
+app.post('/joinNamespace', (req, res) => {
+  const { username, roomId } = req.body;
+  db.joinGame(username, roomId)
+    .then((townsPersonId) => {
+      res.status(201).json(townsPersonId);
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(400);
+    });
+});
+
+// this needs to be refactored
 app.get('/startGame', (req, res) => {
   const { townsPeople, roomId } = req.body;
 
@@ -115,13 +139,5 @@ app.get('/startGame', (req, res) => {
       res.status(500).json(error);
     });
 });
-
-
-// io.on('connection', (socket) => {
-//   socket.emit('news', { hello: 'world' });
-//   socket.on('my other event', (data) => {
-//     console.log(data);
-//   });
-// });
 
 server.listen(port, () => console.log(`listening on port ${port}`));
