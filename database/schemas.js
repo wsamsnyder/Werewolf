@@ -39,6 +39,13 @@ const room = new mongoose.Schema({
     },
   ],
 
+  ghosts: [
+    {
+      username: { type: String },
+      socketId: { type: String },
+    },
+  ],
+
   allPlayers: [
     {
       username: { type: String },
