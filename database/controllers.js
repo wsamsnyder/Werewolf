@@ -18,13 +18,23 @@ exports.db = {
     Room.findById(gameId)
       .then((gameRoom) => {
         gameRoom.townsPeople.push({ username });
+        gameRoom.allPlayers.push({ username });
+
         return gameRoom.save()
           .then((updatedTown) => {
-            const { townsPeople } = updatedTown;
+            const { townsPeople, moderator } = updatedTown;
+            const modUsername = moderator.username;
+
+            let townRoomId;
+            let townsPersonId;
             for (let i = 0; i < townsPeople.length; i++) {
               if (townsPeople[i].username === username) {
-                return townsPeople[i]._id;
+                townsPersonId = townsPeople[i]._id;
               }
+              if (townsPeople[i].username === modUsername) {
+                townRoomId = townsPeople[i]._id;
+              }
+              return { townRoomId, townsPersonId };
             }
             return null;
           });

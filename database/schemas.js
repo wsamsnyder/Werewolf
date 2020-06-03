@@ -38,6 +38,13 @@ const room = new mongoose.Schema({
       alive: { type: Boolean, default: true },
     },
   ],
+
+  allPlayers: [
+    {
+      username: { type: String },
+      socketId: { type: String },
+    },
+  ],
 });
 
 exports.Room = mongoose.model('Room', room);
