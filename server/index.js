@@ -53,15 +53,21 @@ const createCommandRoom = (namespaceId) => {
       const timer = new Timer();
 
       // if there isn't a mod already, verifies before setting to moderator
-      socket.on('firstConnection', (gameId) => {
+      // when a new player joins emit a new list of the playernames
+      socket.on('firstConnection', (gameId, username) => {
         if (!moderator) {
-          db.validatePlayer(gameId, socket.id)
+          db.validateModerator(gameId, socket.id)
             .then((isModerator) => {
               if (isModerator) {
                 moderator = socket.id;
               } else {
                 socket.disconnect();
               }
+            });
+        } else {
+          db.getAllPlayers(gameId)
+            .then((players) =>{
+              namespace.emit('newPlayer', players);
             });
         }
       });
