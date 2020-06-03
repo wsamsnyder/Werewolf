@@ -5,6 +5,7 @@ const app = express();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 const { db } = require('../database/controllers');
+const { Timer } = require('./Timer');
 
 const port = process.env.SERVER_PORT;
 
@@ -17,25 +18,23 @@ const createChatRooms = (namespaceId) => {
   const namespace = io
     .of(`/${namespaceId}`)
     .on('connection', (socket) => {
-      const validSocketIds = {};
+      const validPlayers = {};
 
       socket.on('firstConnection', (username, userId, gameId, roomName) => {
         // see if the player's userId is already in the db w/socketId. reject the connection if true
-        const socketId = socket.id.split('#')[1];
-        db.validatePlayer(userId, gameId, roomName, socketId)
+        db.validatePlayer(userId, gameId, roomName, socket.id)
           .then((isValidPlayer) => {
             if (isValidPlayer) {
-              validSocketIds[socket.id] = true;
+              validPlayers[socket.id] = true;
               namespace.emit('message', { username, message: 'joined!' });
             } else {
-              console.log('player is invalid');
               socket.disconnect();
             }
           });
       });
 
       socket.on('message', (messageObj) => {
-        if (validSocketIds[socket.id]) {
+        if (validPlayers[socket.id]) {
           namespace.emit('message', messageObj);
         } else {
           socket.disconnect();
@@ -51,21 +50,11 @@ const createCommandRoom = (namespaceId) => {
     .of(`/${namespaceId}`)
     .on('connection', (socket) => {
       let moderator;
+      const Timer =
 
       socket.on('firstConnection', (userId, gameId) => {
         // see if the player's userId is already in the db w/socketId. reject the connection if true
-        const socketId = socket.id.split('#')[1];
-        db.validatePlayer(userId, gameId, roomName, socketId)
-          .then((isValidPlayer) => {
-
-            // if (isValidPlayer) {
-            //   validSocketIds[socket.id] = true;
-            //   namespace.emit('message', { username, message: 'joined!' });
-            // } else {
-            //   console.log('player is invalid');
-            //   socket.disconnect();
-            // }
-          });
+        if (!moderator) moderator = socket.id;
       });
 
       socket.on('message', (messageObj) => {
@@ -115,11 +104,13 @@ app.post('/createNamespace', (req, res) => {
     });
 });
 
+// returns the townsPersonChatId(namespace to join for chat)
+// and the townsPersonId (identifier for the room)
 app.post('/joinNamespace', (req, res) => {
   const { username, roomId } = req.body;
   db.joinGame(username, roomId)
-    .then((townsPersonId) => {
-      res.status(201).json(townsPersonId);
+    .then(({ townRoomId, townsPersonId }) => {
+      res.status(201).json({ townRoomId, townsPersonId });
     })
     .catch((error) => {
       console.log(error);

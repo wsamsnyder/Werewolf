@@ -96,4 +96,16 @@ exports.db = {
         return false;
       })
   ),
+
+  validateModerator: ((gameId, socketId) => {
+    Room.findById(gameId)
+      .then((gameRoom) => {
+        const { moderator } = gameRoom;
+        if (moderator._id === gameId && moderator.socketId === undefined) {
+          moderator.socketId = socketId;
+          return true;
+        }
+        return false;
+      });
+  }),
 };
