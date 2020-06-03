@@ -30,22 +30,21 @@ const App = () => {
   // make a new room with the namespace of the id returned
   const createGameRoom = (newUsername) => {
     api.createGameRoom(newUsername)
-      .then(({ gameId, chatRooms }) => {
+      .then(({ gameId, townChat, otherChats }) => {
         setRoom(gameId);
-        console.log(chatRooms);
-        const townRoomName = chatRooms[0].roomName;
-        let { roomId } = chatRooms[0];
+        // connect to commandRoom
+
+        const { townId, townName } = townChat;
         setTown({
-          roomId: gameId,
+          roomId: townId,
           username: newUsername,
-          userId: roomId,
+          userId: townId,
           gameId,
-          roomName: townRoomName,
+          roomName: townName,
         });
-        // could push to state each time but component should only render once to avoid conflicts
+        // could push to state each time but only want to render when complete
         const rooms = [];
-        for (let i = 1; i < chatRooms.length; i++) {
-          const { roomName, roomId } = chatRooms[i];
+        otherChats.forEach(({ roomName, roomId }) => {
           rooms.push({
             roomId,
             username: newUsername,
@@ -53,7 +52,8 @@ const App = () => {
             gameId,
             roomName,
           });
-        }
+        });
+
         setUsername(newUsername);
         setModerator(true);
         setSockets(rooms);
@@ -75,7 +75,6 @@ const App = () => {
         console.log(townsPersonId);
       });
   };
-
 
   const render = (usernameIsEmtpy) => {
     if (!usernameIsEmtpy) {
