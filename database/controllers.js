@@ -4,7 +4,7 @@ exports.db = {
   // rename to create game
   createRoom: (name) => {
     const newRoom = new Room({
-      mod: name,
+      moderator: { username: name },
       wolves: [{ username: name }],
       doctor: [{ username: name }],
       seer: [{ username: name }],
