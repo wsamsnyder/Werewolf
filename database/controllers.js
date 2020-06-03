@@ -80,6 +80,13 @@ exports.db = {
     });
   },
 
+  getAllPlayers: (gameId) => {
+    Room.findById(gameId)
+      .then(({ allPlayers }) => {
+        return allPlayers.map(({ username }) => players.push(username));
+      });
+  },
+
   // verifies that a player belongs in a specific room and has not connected
   // on the namespace before
   validatePlayer: (userId, gameId, chatRoom, socketId) => (
