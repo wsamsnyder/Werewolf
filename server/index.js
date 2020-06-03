@@ -21,7 +21,8 @@ app.use(express.json());
 
 // takes in the roomID and creates socket listeners
 // I want to factor this out to it's own file
-const createNamespace = (namespaceId) => {
+const createChatRooms = (namespaceId) => {
+  console.log(namespaceId);
   const namespace = io
     .of(`/${namespaceId}`)
     .on('connection', (socket) => {
@@ -29,7 +30,7 @@ const createNamespace = (namespaceId) => {
 
       socket.on('firstConnection', (username, userId, gameId, roomName) => {
         // see if the player's userId is already in the db w/socketId. reject the connection if true
-        console.log('on first connection')
+        console.log('on first connection');
         const socketId = socket.id.split('#')[1];
         db.validatePlayer(userId, gameId, roomName, socketId)
           .then((isValidPlayer) => {
@@ -38,6 +39,7 @@ const createNamespace = (namespaceId) => {
               validSocketIds[socket.id] = true;
               namespace.emit('message', { username, message: ' has joined!' });
             } else {
+              console.log('player is invalid');
               socket.disconnect();
             }
           });
@@ -53,8 +55,21 @@ const createNamespace = (namespaceId) => {
     });
 };
 
+app.post('/joinNamespace', (req, res) => {
+  const { username, roomId } = req.body;
+  db.joinGame(username, roomId)
+    .then((townsPersonId) => {
+      res.status(201).json(townsPersonId);
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500);
+    });
+});
+
 app.post('/createNamespace', (req, res) => {
   const { moderator } = req.body;
+  console.log('moderator', moderator);
 
   // needs to create the socket for the room
   db.createRoom(moderator)
@@ -66,11 +81,10 @@ app.post('/createNamespace', (req, res) => {
       seer,
     }) => {
       // console.log(_id, wolves[0], doctor[0], seer[0], townsPeople[0]);
-      const channels = [townsPeople, wolves, doctor, seer];
+      const channels = [[{ _id }], townsPeople, wolves, doctor, seer];
       channels.forEach((channel) => {
-        createNamespace(channel[0]._id);
+        createChatRooms(channel[0]._id);
       });
-
 
       res.status(201).json(
         {
@@ -85,7 +99,8 @@ app.post('/createNamespace', (req, res) => {
       );
     })
     .catch((error) => {
-      res.status(500).json(error);
+      console.log(error);
+      res.status(500);
     });
 });
 

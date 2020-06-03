@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-// import Socket from './sockets';
 import { api } from './lib';
 import ChatRoom from './ChatRoom';
+import Login from './Login';
 
 const MainDiv = styled.div`
   display: grid;
@@ -14,92 +14,88 @@ const MainDiv = styled.div`
   height: 100%;
 `;
 
-const SplashScreenDiv = styled.div`
-  grid-row: 3;
-  grid-column: 2;
-  display: grid;
-  grid-template: 1fr 20% 1fr / 1fr 20% 20% 1fr;
-  grid-gap: 20px;
-`;
-
-const SplashScreenButton = styled.button`
-  grid-column: ${(props) => props.join ? 2 : 3};
-  grid-row: 2;
-`;
-
 const GameId = styled.div`
   grid-column: 2;
   grid-row: 1;
   text-align: center;
 `;
 
-// const StyledChatRoom = styled.ChatRoom`
-//   grid-column: 3;
-//   grid-row: 2;
-//   border-style: solid;
-// `;
-
 const App = () => {
-  const username = 'sam';
   const [town, setTown] = useState('');
-  const [moderator, setmoderator] = useState(false);
   const [sockets, setSockets] = useState([]);
   const [room, setRoom] = useState('');
+  const [moderator, setModerator] = useState(false);
+  const [username, setUsername] = useState('');
 
   // make a new room with the namespace of the id returned
-  const createGameRoom = () => {
-    setmoderator(true);
-
-    api.createGameRoom('sam')
+  const createGameRoom = (newUsername) => {
+    api.createGameRoom(newUsername)
       .then(({ gameId, chatRooms }) => {
         setRoom(gameId);
+        console.log(chatRooms);
         const townRoomName = chatRooms[0].roomName;
-        const townRoomId = chatRooms[0].roomId;
+        let { roomId } = chatRooms[0];
         setTown({
-          roomId: townRoomId,
-          username,
-          userId: townRoomId,
+          roomId: gameId,
+          username: newUsername,
+          userId: roomId,
           gameId,
           roomName: townRoomName,
         });
+        // could push to state each time but component should only render once to avoid conflicts
         const rooms = [];
         for (let i = 1; i < chatRooms.length; i++) {
           const { roomName, roomId } = chatRooms[i];
           rooms.push({
             roomId,
-            username,
+            username: newUsername,
             userId: roomId,
             gameId,
             roomName,
           });
         }
-
+        setUsername(newUsername);
+        setModerator(true);
         setSockets(rooms);
       });
   };
 
-  const joinGameRoom = () => {
-    // not implemented atm
-    // api.joinGameRoom('sam');
+  const joinGameRoom = (newUsername, roomId) => {
+    // send user information to the server
+    api.joinGameRoom(newUsername, roomId)
+      .then((townsPersonId) => {
+        setTown({
+          roomId,
+          username: newUsername,
+          userId: townsPersonId,
+          gameId: roomId,
+          roomName: 'townsPeople',
+        });
+        setUsername(newUsername);
+        console.log(townsPersonId);
+      });
   };
 
 
-  const render = () => {
-    if (!town) {
+  const render = (usernameIsEmtpy) => {
+    if (!usernameIsEmtpy) {
       return (
-        <SplashScreenDiv>
-          <SplashScreenButton join type="button" onClick={createGameRoom}>Create Room</SplashScreenButton>
-          <SplashScreenButton type="button" onClick={joinGameRoom}>Join Room</SplashScreenButton>
-        </SplashScreenDiv>
+        <Login
+          joinGameRoom={joinGameRoom}
+          createGameRoom={createGameRoom}
+        />
       );
     }
+    // I think that this will take care of itself? is sockets is empty, nothing will render
+    // when one is added, it should render and if my conditionals are correct
+    // it'll take the whole right side
     return (
       <MainDiv>
         <GameId>{room}</GameId>
         <ChatRoom
-          className="town"
-          location={0}
+          location={-1}
           roomData={town}
+          moderator={moderator}
         />
         {
           sockets.map((roomData, idx) => (
@@ -117,7 +113,7 @@ const App = () => {
 
   return (
     <MainDiv>
-      {render()}
+      {render(username)}
     </MainDiv>
   );
 };

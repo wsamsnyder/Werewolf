@@ -6,8 +6,8 @@ import Socket from './sockets';
 import ChatMessage from './ChatMessage';
 
 const ChatRoomDiv = styled.div`
-  grid-column: ${(props) => props.room === 'townsPeople' ? '1' : '3'};
-  grid-row: ${(props) => props.room === 'townsPeople' || props.moderator === 'moderator' ? '2 / 5' : `${props.location + 2}`};
+  grid-column: ${(props) => props.roomName === 'townsPeople' ? '1' : '3'};
+  grid-row: ${(props) => props.roomName === 'townsPeople' || props.moderator === 'moderator' ? '2 / 5' : props.location + 2}};
   border-style: solid;
 `;
 
@@ -16,10 +16,10 @@ const ChatRoomDiv = styled.div`
 // I'm going to use 'location' to seperate out the divs
 const ChatRoom = ({ roomData, location, moderator }) => {
   const [messages, setMessages] = useState([]);
-  const [socket, setSocket] = useState(null);
   const [newMessage, setNewMessage] = useState('');
 
-  console.log(roomData.roomName);
+  // doesn't need to be in state
+  const [socket, setSocket] = useState(null);
 
   const {
     roomId,
@@ -51,7 +51,7 @@ const ChatRoom = ({ roomData, location, moderator }) => {
   };
 
   return (
-    <ChatRoomDiv className={roomData.roomName} location={location} moderator={moderator}>
+    <ChatRoomDiv roomName={roomData.roomName} location={location} moderator={moderator}>
       <div>
         {roomName}
       </div>
@@ -76,7 +76,6 @@ const ChatRoom = ({ roomData, location, moderator }) => {
             type="text"
             value={newMessage}
             onSubmit={sendMessage}
-            // defaultValue="type message"
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyPress={(e) => keyPressed(e)}
           />
@@ -86,8 +85,6 @@ const ChatRoom = ({ roomData, location, moderator }) => {
     </ChatRoomDiv>
   );
 };
-
-// need to do props validation
 
 ChatRoom.propTypes = {
   roomData: PropTypes.objectOf(PropTypes.string).isRequired,
