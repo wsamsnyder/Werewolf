@@ -80,12 +80,10 @@ exports.db = {
     });
   },
 
-  getAllPlayers: (gameId) => {
+  getAllPlayers: (gameId) => (
     Room.findById(gameId)
-      .then(({ allPlayers }) => {
-        return allPlayers.map(({ username }) => players.push(username));
-      });
-  },
+      .then(({ allPlayers }) => allPlayers.map(({ username }) => username))
+  ),
 
   // verifies that a player belongs in a specific room and has not connected
   // on the namespace before
@@ -104,15 +102,16 @@ exports.db = {
       })
   ),
 
-  validateModerator: ((gameId, socketId) => {
-    Room.findById(gameId)
-      .then((gameRoom) => {
-        const { moderator } = gameRoom;
-        if (moderator._id === gameId && moderator.socketId === undefined) {
-          moderator.socketId = socketId;
-          return true;
-        }
-        return false;
-      });
-  }),
+  // validateModerator: ((gameId, socketId) => (
+  //   Room.findById(gameId)
+  //     .then((gameRoom) => {
+  //       const { moderator } = gameRoom;
+  //       console.log( moderator, gameId);
+  //       if (moderator._id === gameId && moderator.socketId === undefined) {
+  //         moderator.socketId = socketId;
+  //         return true;
+  //       }
+  //       return false;
+  //     })
+  // )),
 };
