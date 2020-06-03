@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-import Socket from './sockets';
+import Chat from './chatSocket';
 import ChatMessage from './ChatMessage';
 
 const ChatRoomDiv = styled.div`
@@ -30,10 +30,10 @@ const ChatRoom = ({ roomData, location, moderator }) => {
   } = roomData;
 
   useEffect(() => {
-    const newSocket = new Socket(roomId, username, userId, gameId, roomName);
-    setSocket(newSocket);
+    const newChatSocket = new Chat(roomId, username, userId, gameId, roomName);
+    setSocket(newChatSocket);
 
-    newSocket.joinNamespace((receivedMessage) => {
+    newChatSocket.joinNamespace((receivedMessage) => {
       setMessages((previousMessages) => [...previousMessages, receivedMessage]);
     });
   }, []);
