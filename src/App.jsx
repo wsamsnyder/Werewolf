@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
 import { api } from './lib';
 import ChatRoom from './ChatRoom';
 import Login from './Login';
+import CommandConsole from './CommandConsole';
 
 const MainDiv = styled.div`
   display: grid;
@@ -24,27 +25,19 @@ const App = () => {
   const [town, setTown] = useState('');
   const [chatSockets, setChatSockets] = useState([]);
   const [room, setRoom] = useState('');
+  // const [commandRoom, setCommandRoom] = useState('');
   const [moderator, setModerator] = useState(false);
 
   let username;
+  // let room;
 
   // make a new room with the namespace of the id returned
   const createGameRoom = (newUsername) => {
     username = newUsername;
+    // room = gameId;
     api.createGameRoom(username)
       .then(({ gameId, townChat, otherChats }) => {
-        setRoom(gameId);
-
-        // connect to commandRoom
-
-        const { townId, townName } = townChat;
-        setTown({
-          roomId: townId,
-          username,
-          userId: townId,
-          gameId,
-          roomName: townName,
-        });
+        // room = gameId;
         // could push to state each time but only want to render when complete
         const rooms = [];
         otherChats.forEach(({ roomName, roomId }) => {
@@ -56,13 +49,23 @@ const App = () => {
             roomName,
           });
         });
+        const { townId, townName } = townChat;
+        setTown({
+          roomId: townId,
+          username,
+          userId: townId,
+          gameId,
+          roomName: townName,
+        });
         setModerator(true);
         setChatSockets(rooms);
+        setRoom(gameId);
       });
   };
 
   const joinGameRoom = (newUsername, roomId) => {
     username = newUsername;
+    // room = roomId;
 
     // send user information to the server
     api.joinGameRoom(newUsername, roomId)
@@ -78,8 +81,9 @@ const App = () => {
       });
   };
 
-  const render = (townToJoin) => {
-    if (!townToJoin) {
+  const render = (roomToJoin) => {
+    console.log(room);
+    if (!roomToJoin) {
       return (
         <Login
           joinGameRoom={joinGameRoom}
@@ -98,6 +102,9 @@ const App = () => {
           roomData={town}
           moderator={moderator}
         />
+        <CommandConsole
+          connection={room}
+        />
         {
           chatSockets.map((roomData, idx) => (
             <ChatRoom
@@ -114,7 +121,7 @@ const App = () => {
 
   return (
     <MainDiv>
-      {render(town)}
+      {render(room)}
     </MainDiv>
   );
 };

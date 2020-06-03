@@ -15,10 +15,11 @@ app.use(express.json());
 // takes in the roomID and creates socket listeners
 // I want to factor this out to it's own file
 const createChatRooms = (namespaceId) => {
+  const validPlayers = {};
+
   const namespace = io
     .of(`/${namespaceId}`)
     .on('connection', (socket) => {
-      const validPlayers = {};
 
       socket.on('firstConnection', (username, userId, gameId, roomName) => {
         // see if the player's userId is already in the db w/socketId. reject the connection if true
@@ -45,32 +46,27 @@ const createChatRooms = (namespaceId) => {
 
 // room that time and other mod commands will go through
 const createCommandRoom = (namespaceId) => {
+  let moderator;
   // ensure the
   const namespace = io
     .of(`/${namespaceId}`)
     .on('connection', (socket) => {
-      let moderator;
       const timer = new Timer();
 
       // if there isn't a mod already, verifies before setting to moderator
       // when a new player joins emit a new list of the playernames
-      socket.on('firstConnection', (gameId, username) => {
+      socket.on('firstConnection', (gameId) => {
         if (!moderator) {
-          db.validateModerator(gameId, socket.id)
-            .then((isModerator) => {
-              if (isModerator) {
-                moderator = socket.id;
-              } else {
-                socket.disconnect();
-              }
-            });
+          moderator = socket.id;
         } else {
           db.getAllPlayers(gameId)
-            .then((players) =>{
+            .then((players) => {
               namespace.emit('newPlayer', players);
             });
         }
       });
+
+      // on disconnect, remove the player from all roles in game
 
       socket.on('startTime', () => {
         if (socket.id === moderator) {
