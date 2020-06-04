@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 // import styled from 'styled-components';
 
@@ -10,12 +10,11 @@ import PropTypes from 'prop-types';
 // `;
 
 const TimeControls = ({ timeControlSocket }) => {
-
   return (
     <div>
       <button
         type="button"
-        onClick={timeControlSocket.startTime}
+        onClick={() => timeControlSocket.startTime()}
       >
         Start Time
       </button>
@@ -25,7 +24,7 @@ const TimeControls = ({ timeControlSocket }) => {
 
 
 TimeControls.propTypes = {
-  timeControlSocket: PropTypes.objectOf(PropTypes.object).isRequired,
+  timeControlSocket: PropTypes.shape({}).isRequired,
 };
 
 export default TimeControls;
