@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
 
 import CommandSocket from './commandSocket';
+
+const CommandConsoleDiv = styled.div`
+  grid-column: 2 / 3;
+  grid-row: 3;
+  text-align: center;
+`;
 
 const CommandConsole = ({ connection }) => {
   const [players, setPlayers] = useState([]);
@@ -17,9 +24,9 @@ const CommandConsole = ({ connection }) => {
 
 
   return (
-    <div>
+    <CommandConsoleDiv>
       { players }
-    </div>
+    </CommandConsoleDiv>
   );
 };
 

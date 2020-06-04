@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
 import { api } from './lib';
-import ChatRoom from './ChatRoom';
+import ChatRoom from './chats/ChatRoom';
 import Login from './Login';
-import CommandConsole from './CommandConsole';
+import CommandConsole from './controlPanel/CommandConsole';
 
 const MainDiv = styled.div`
   display: grid;
