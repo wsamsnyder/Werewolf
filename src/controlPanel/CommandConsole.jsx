@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 import CommandSocket from './commandSocket';
+import TimeControls from './TimeControls';
+
 
 const CommandConsoleDiv = styled.div`
   grid-column: 2 / 3;
@@ -10,21 +12,33 @@ const CommandConsoleDiv = styled.div`
   text-align: center;
 `;
 
-const CommandConsole = ({ connection }) => {
+const CommandConsole = ({ connection, moderator }) => {
   const [players, setPlayers] = useState([]);
+  const [time, setTime] = useState('');
+  // const [timeControlSocket, setTimeControlSocket] = useState({});
   // const [socket, setSocket] = useState('');
 
+  const timeCallback = (newTime) => setTime(newTime);
+
+  const playerListCallback = (allPlayers) => setPlayers(allPlayers);
+
+  let timeControlSocket;
+
   useEffect(() => {
-    console.log('connection: ', connection);
     const newCommandSocket = new CommandSocket(connection);
-    // setSocket(newCommandSocket);
-
-    newCommandSocket.initialListeners((playerList) => setPlayers(playerList));
+    timeControlSocket = newCommandSocket.initialListeners(playerListCallback, timeCallback);
   }, []);
-
 
   return (
     <CommandConsoleDiv>
+      { time }
+      {moderator
+        ? (
+          <TimeControls
+            timeControlSocket={timeControlSocket}
+          />
+        )
+        : ''}
       { players }
     </CommandConsoleDiv>
   );
@@ -33,6 +47,7 @@ const CommandConsole = ({ connection }) => {
 
 CommandConsole.propTypes = {
   connection: PropTypes.string.isRequired,
+  moderator: PropTypes.bool.isRequired,
 };
 
 export default CommandConsole;

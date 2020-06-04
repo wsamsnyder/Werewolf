@@ -20,7 +20,6 @@ const createChatRooms = (namespaceId) => {
   const namespace = io
     .of(`/${namespaceId}`)
     .on('connection', (socket) => {
-
       socket.on('firstConnection', (username, userId, gameId, roomName) => {
         // see if the player's userId is already in the db w/socketId. reject the connection if true
         db.validatePlayer(userId, gameId, roomName, socket.id)
@@ -69,6 +68,7 @@ const createCommandRoom = (namespaceId) => {
       // on disconnect, remove the player from all roles in game
 
       socket.on('startTime', () => {
+        console.log('starting time');
         if (socket.id === moderator) {
           timer.start((time) => namespace.emit('time', time));
         } else {
