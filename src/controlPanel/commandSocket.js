@@ -7,7 +7,7 @@ class Command {
     this.gameId = gameId;
   }
 
-  initialListeners(playerListCb) {
+  initialListeners(playerListCb, timeCb) {
     this.namespace = io.connect(`/${this.gameId}`);
     this.namespace.on('connect', () => {
       console.log('connected', this.gameId);
@@ -15,21 +15,26 @@ class Command {
     });
 
     this.namespace.on('newPlayer', (players) => {
-      console.log(players);
       playerListCb(players);
     });
 
     // this.namespace.on('disconnect', () => {
     //   callback({ username: this.username, message: 'has disconnected' });
     // });
+
+
+  }
+  // setTime
+
+  // startTime
+  startTime() {
+    console.log('sending startTime');
+    this.namespace.emit('startTime', true);
   }
 
-  // takes a callback that updates the list of players
-  // playerList(callback) {
-  //   this.namespace.on('newPlayer', (players) => {
-  //     callback(players);
-  //   });
-  // }
+  // stopTime
+
+  // addTime
 }
 
 export default Command;

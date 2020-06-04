@@ -82,7 +82,6 @@ const App = () => {
   };
 
   const render = (roomToJoin) => {
-    console.log(room);
     if (!roomToJoin) {
       return (
         <Login
@@ -104,6 +103,7 @@ const App = () => {
         />
         <CommandConsole
           connection={room}
+          moderator={moderator}
         />
         {
           chatSockets.map((roomData, idx) => (
