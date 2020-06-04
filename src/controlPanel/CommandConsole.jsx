@@ -15,18 +15,20 @@ const CommandConsoleDiv = styled.div`
 const CommandConsole = ({ connection, moderator }) => {
   const [players, setPlayers] = useState([]);
   const [time, setTime] = useState('');
-  // const [timeControlSocket, setTimeControlSocket] = useState({});
+  const [timeControlSocket, setTimeControlSocket] = useState({});
   // const [socket, setSocket] = useState('');
 
   const timeCallback = (newTime) => setTime(newTime);
 
   const playerListCallback = (allPlayers) => setPlayers(allPlayers);
 
-  let timeControlSocket;
+  // let timeControlSocket;
 
   useEffect(() => {
     const newCommandSocket = new CommandSocket(connection);
-    timeControlSocket = newCommandSocket.initialListeners(playerListCallback, timeCallback);
+    // listeners independent of emits, doesn't return anything
+    newCommandSocket.initialListeners(playerListCallback, timeCallback);
+    setTimeControlSocket(newCommandSocket);
   }, []);
 
   return (
@@ -34,6 +36,7 @@ const CommandConsole = ({ connection, moderator }) => {
       { time }
       {moderator
         ? (
+          // <div>who the fuck cares</div>
           <TimeControls
             timeControlSocket={timeControlSocket}
           />
