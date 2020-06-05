@@ -57,8 +57,7 @@ exports.db = {
 
         const allPlayersCopy = [...allPlayers];
 
-        const numOfWolves = 1;
-        // Math.floor(allPlayersCopy.length / 5)
+        const numOfWolves = Math.floor(allPlayersCopy.length / 5);
 
         for (let i = 0; i <= numOfWolves + 3; i++) {
           const randomPlayerIndex = Math.floor(Math.random() * allPlayersCopy.length);
