@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 //   text-align: center;
 // `;
 
-const TimeControls = ({ timeControlSocket }) => {
+const TimeControls = ({ controlSocket }) => {
   const [newTime, setNewTime] = useState();
 
 
@@ -21,7 +21,7 @@ const TimeControls = ({ timeControlSocket }) => {
     e.preventDefault();
     // I want this here but don't have the rest of the infrastructure
     // const [minutes, seconds] = newTime.split(':');
-    timeControlSocket.setTime(Number(newTime * 60));
+    controlSocket.setTime(Number(newTime * 60));
   };
 
   return (
@@ -48,13 +48,13 @@ const TimeControls = ({ timeControlSocket }) => {
       }
       <button
         type="button"
-        onClick={() => timeControlSocket.startTime()}
+        onClick={() => controlSocket.startTime()}
       >
         Start Time
       </button>
       <button
         type="button"
-        onClick={() => timeControlSocket.pauseTime()}
+        onClick={() => controlSocket.pauseTime()}
       >
         Pause Time
       </button>
@@ -63,7 +63,7 @@ const TimeControls = ({ timeControlSocket }) => {
 };
 
 TimeControls.propTypes = {
-  timeControlSocket: PropTypes.shape({
+  controlSocket: PropTypes.shape({
     startTime: PropTypes.func,
     setTime: PropTypes.func,
     pauseTime: PropTypes.func,
