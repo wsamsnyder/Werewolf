@@ -14,7 +14,7 @@ const CommandConsoleDiv = styled.div`
 
 const CommandConsole = ({ connection, moderator }) => {
   const [players, setPlayers] = useState([]);
-  const [time, setTime] = useState('');
+  const [time, setTime] = useState(0);
   const [timeControlSocket, setTimeControlSocket] = useState({});
   // const [socket, setSocket] = useState('');
 
@@ -26,18 +26,21 @@ const CommandConsole = ({ connection, moderator }) => {
 
   useEffect(() => {
     const newCommandSocket = new CommandSocket(connection);
+    // console.log(newCommandSocket);
     // listeners independent of emits, doesn't return anything
     newCommandSocket.initialListeners(playerListCallback, timeCallback);
+    // timeControlSocket = newCommandSocket;
     setTimeControlSocket(newCommandSocket);
   }, []);
 
   return (
     <CommandConsoleDiv>
-      { time }
+      { `${(time / 60).toString().split('.')[0]}:${(time % 60).toString().padStart(2, '0')}`}
       {moderator
         ? (
           // <div>who the fuck cares</div>
           <TimeControls
+            // serverTime={time}
             timeControlSocket={timeControlSocket}
           />
         )
