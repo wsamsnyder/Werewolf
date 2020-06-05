@@ -2,6 +2,7 @@ class Timer {
   // might want to take the callback on first call
   constructor() {
     this.time = 0;
+    this.lastTime = 0;
     this.intervalID = null;
   }
 
@@ -9,6 +10,7 @@ class Timer {
   set(timeLimit) {
     // needs to be in seconds
     this.time = timeLimit;
+    this.lastTime = timeLimit;
   }
 
   // start -> takes a callback that is the namespace and room to emit on
@@ -17,12 +19,13 @@ class Timer {
       callback(this.time -= 1);
       if (this.time <= 0) {
         clearInterval(this.intervalID);
+        this.time = this.lastTime;
       }
     }, 1000);
   }
 
   // stop
-  stop() {
+  pause() {
     clearInterval(this.intervalID);
   }
 

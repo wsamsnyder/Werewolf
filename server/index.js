@@ -46,12 +46,11 @@ const createChatRooms = (namespaceId) => {
 // room that time and other mod commands will go through
 const createCommandRoom = (namespaceId) => {
   let moderator;
+  const timer = new Timer();
   // ensure the
   const namespace = io
     .of(`/${namespaceId}`)
     .on('connection', (socket) => {
-      const timer = new Timer();
-
       // if there isn't a mod already, verifies before setting to moderator
       // when a new player joins emit a new list of the playernames
       socket.on('firstConnection', (gameId) => {
@@ -68,8 +67,8 @@ const createCommandRoom = (namespaceId) => {
       // on disconnect, remove the player from all roles in game
 
       socket.on('startTime', () => {
-        console.log('starting time');
         if (socket.id === moderator) {
+          console.log('starting time');
           timer.start((time) => namespace.emit('time', time));
         } else {
           socket.disconnect();
@@ -77,6 +76,7 @@ const createCommandRoom = (namespaceId) => {
       });
 
       socket.on('setTime', (amountOfTime) => {
+        console.log('setting time', amountOfTime);
         if (socket.id === moderator) {
           timer.set(amountOfTime);
         } else {
@@ -84,9 +84,9 @@ const createCommandRoom = (namespaceId) => {
         }
       });
 
-      socket.on('stopTime', () => {
+      socket.on('pauseTime', () => {
         if (socket.id === moderator) {
-          timer.stop();
+          timer.pause();
         } else {
           socket.disconnect();
         }
