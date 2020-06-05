@@ -15,11 +15,11 @@ app.use(express.json());
 // takes in the roomID and creates socket listeners
 // I want to factor this out to it's own file
 const createChatRooms = (namespaceId) => {
+  const validPlayers = {};
+
   const namespace = io
     .of(`/${namespaceId}`)
     .on('connection', (socket) => {
-      const validPlayers = {};
-
       socket.on('firstConnection', (username, userId, gameId, roomName) => {
         // see if the player's userId is already in the db w/socketId. reject the connection if true
         db.validatePlayer(userId, gameId, roomName, socket.id)
@@ -45,29 +45,31 @@ const createChatRooms = (namespaceId) => {
 
 // room that time and other mod commands will go through
 const createCommandRoom = (namespaceId) => {
+  let moderator;
+  const game = namespaceId;
+  const timer = new Timer();
   // ensure the
   const namespace = io
     .of(`/${namespaceId}`)
     .on('connection', (socket) => {
-      let moderator;
-      const timer = new Timer();
-
       // if there isn't a mod already, verifies before setting to moderator
+      // when a new player joins emit a new list of the playernames
       socket.on('firstConnection', (gameId) => {
         if (!moderator) {
-          db.validatePlayer(gameId, socket.id)
-            .then((isModerator) => {
-              if (isModerator) {
-                moderator = socket.id;
-              } else {
-                socket.disconnect();
-              }
+          moderator = socket.id;
+        } else {
+          db.getAllPlayers(gameId)
+            .then((players) => {
+              namespace.emit('newPlayer', players);
             });
         }
       });
 
+      // on disconnect, remove the player from all roles in game
+
       socket.on('startTime', () => {
         if (socket.id === moderator) {
+          console.log('starting time');
           timer.start((time) => namespace.emit('time', time));
         } else {
           socket.disconnect();
@@ -75,6 +77,7 @@ const createCommandRoom = (namespaceId) => {
       });
 
       socket.on('setTime', (amountOfTime) => {
+        console.log('setting time', amountOfTime);
         if (socket.id === moderator) {
           timer.set(amountOfTime);
         } else {
@@ -82,17 +85,18 @@ const createCommandRoom = (namespaceId) => {
         }
       });
 
-      socket.on('stopTime', () => {
+      socket.on('pauseTime', () => {
         if (socket.id === moderator) {
-          timer.stop();
+          timer.pause();
         } else {
           socket.disconnect();
         }
       });
 
-      socket.on('addTime', (additionalTime) => {
+      socket.on('startGame', () => {
+        console.log(game);
         if (socket.id === moderator) {
-          timer.add(additionalTime);
+          db.startGame(game);
         } else {
           socket.disconnect();
         }
@@ -155,16 +159,16 @@ app.post('/joinNamespace', (req, res) => {
 });
 
 // this needs to be refactored
-app.get('/startGame', (req, res) => {
-  const { townsPeople, roomId } = req.body;
+// app.get('/startGame', (req, res) => {
+//   const { townsPeople, roomId } = req.body;
 
-  db.createGame(townsPeople, roomId)
-    .then((val) => {
-      res.status(201).json(val);
-    })
-    .catch((error) => {
-      res.status(500).json(error);
-    });
-});
+//   db.createGame(townsPeople, roomId)
+//     .then((val) => {
+//       res.status(201).json(val);
+//     })
+//     .catch((error) => {
+//       res.status(500).json(error);
+//     });
+// });
 
 server.listen(port, () => console.log(`listening on port ${port}`));
