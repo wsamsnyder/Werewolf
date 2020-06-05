@@ -15,7 +15,8 @@ const CommandConsoleDiv = styled.div`
 const CommandConsole = ({ connection, moderator }) => {
   const [players, setPlayers] = useState([]);
   const [time, setTime] = useState(0);
-  const [timeControlSocket, setTimeControlSocket] = useState({});
+  const [controlSocket, setControlSocket] = useState({});
+  const [gameStarted, setGameStarted] = useState(false);
   // const [socket, setSocket] = useState('');
 
   const timeCallback = (newTime) => setTime(newTime);
@@ -30,18 +31,23 @@ const CommandConsole = ({ connection, moderator }) => {
     // listeners independent of emits, doesn't return anything
     newCommandSocket.initialListeners(playerListCallback, timeCallback);
     // timeControlSocket = newCommandSocket;
-    setTimeControlSocket(newCommandSocket);
+    setControlSocket(newCommandSocket);
   }, []);
+
+  const startGame = () => {
+    time
+  };
 
   return (
     <CommandConsoleDiv>
+      {!gameStarted ? <button type="button" onClick={startGame}>Start Game</button> : ''}
       { `${(time / 60).toString().split('.')[0]}:${(time % 60).toString().padStart(2, '0')}`}
       {moderator
         ? (
           // <div>who the fuck cares</div>
           <TimeControls
             // serverTime={time}
-            timeControlSocket={timeControlSocket}
+            controlSocket={controlSocket}
           />
         )
         : ''}
