@@ -38,11 +38,9 @@ class CommandSocket {
 
   // pauseTime
   pauseTime() {
-    console.log('starting time');
+    console.log('pausing time');
     this.namespace.emit('pauseTime');
   }
-
-  // addTime
 }
 
 export default CommandSocket;
