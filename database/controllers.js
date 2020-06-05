@@ -45,39 +45,43 @@ exports.db = {
 
   // rename to 'start game'
   startGame: (gameId) => {
-    const {
-      wolves,
-      doctor,
-      seer,
-      townsPeople,
-    } = Room.findById(gameId);
 
-    const townsPeopleCopy = [...townsPeople];
+    Room.findById(gameId)
+      .then((results) => {
+        const {
+          wolves,
+          doctor,
+          seer,
+          allPlayers,
+        } = results;
 
-    const numOfWolves = Math.floor(townsPeopleCopy.length / 5);
+        const allPlayersCopy = [...allPlayers];
 
-    for (let i = 0; i <= numOfWolves + 2; i++) {
-      const randomPlayerIndex = Math.floor(Math.random() * townsPeopleCopy.length);
+        const numOfWolves = 1;
+        // Math.floor(allPlayersCopy.length / 5)
 
-      if (wolves.length < numOfWolves) {
-        wolves.push(townsPeopleCopy.splice(randomPlayerIndex, 1)[0]);
-      } else if (!seer) {
-        seer.push(townsPeopleCopy.splice(randomPlayerIndex, 1)[0]);
-      } else {
-        doctor.push(townsPeopleCopy.splice(randomPlayerIndex, 1)[0]);
-      }
-    }
+        for (let i = 0; i <= numOfWolves + 3; i++) {
+          const randomPlayerIndex = Math.floor(Math.random() * allPlayersCopy.length);
 
-    // save to db
-    return Room.findByIdAndUpdate(gameId, {
-      wolves,
-      seer,
-      doctor,
-      townsPeople,
-    },
-    {
-      new: true,
-    });
+          if (wolves.length < numOfWolves + 1) {
+            wolves.push(allPlayersCopy.splice(randomPlayerIndex, 1)[0]);
+          } else if (seer.length + 1 <= 2) {
+            seer.push(allPlayersCopy.splice(randomPlayerIndex, 1)[0]);
+          } else if (doctor.length + 1 <= 2) {
+            doctor.push(allPlayersCopy.splice(randomPlayerIndex, 1)[0]);
+          }
+        }
+
+        // save to db
+        return Room.findByIdAndUpdate(gameId, {
+          wolves,
+          seer,
+          doctor,
+        },
+        {
+          new: true,
+        });
+      });
   },
 
   getAllPlayers: (gameId) => (

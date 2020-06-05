@@ -35,18 +35,20 @@ const CommandConsole = ({ connection, moderator }) => {
   }, []);
 
   const startGame = () => {
-    time
+    controlSocket.startGame();
   };
 
   return (
     <CommandConsoleDiv>
-      {!gameStarted ? <button type="button" onClick={startGame}>Start Game</button> : ''}
+      {
+        !gameStarted && moderator
+          ? <button type="button" onClick={() => startGame()}>Start Game</button>
+          : ''
+      }
       { `${(time / 60).toString().split('.')[0]}:${(time % 60).toString().padStart(2, '0')}`}
       {moderator
         ? (
-          // <div>who the fuck cares</div>
           <TimeControls
-            // serverTime={time}
             controlSocket={controlSocket}
           />
         )
