@@ -28,11 +28,6 @@ class Timer {
   pause() {
     clearInterval(this.intervalID);
   }
-
-  // add? -> extend current time by x
-  add(additionalTime) {
-    this.time += additionalTime;
-  }
 }
 
 exports.Timer = Timer;

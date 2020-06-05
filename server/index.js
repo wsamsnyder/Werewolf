@@ -91,14 +91,6 @@ const createCommandRoom = (namespaceId) => {
           socket.disconnect();
         }
       });
-
-      socket.on('addTime', (additionalTime) => {
-        if (socket.id === moderator) {
-          timer.add(additionalTime);
-        } else {
-          socket.disconnect();
-        }
-      });
     });
 };
 

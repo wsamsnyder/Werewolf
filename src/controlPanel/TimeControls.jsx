@@ -42,6 +42,10 @@ const TimeControls = ({ timeControlSocket }) => {
         />
       </form>
 
+      {
+        /* probably want it so that if there is no time in state
+        it sets state and then continues */
+      }
       <button
         type="button"
         onClick={() => timeControlSocket.startTime()}
