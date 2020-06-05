@@ -41,6 +41,12 @@ class CommandSocket {
     console.log('pausing time');
     this.namespace.emit('pauseTime');
   }
+
+  // startGame
+  startGame() {
+    console.log('starting game');
+    this.namespace.emit('startGame');
+  }
 }
 
 export default CommandSocket;

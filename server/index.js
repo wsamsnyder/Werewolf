@@ -46,6 +46,7 @@ const createChatRooms = (namespaceId) => {
 // room that time and other mod commands will go through
 const createCommandRoom = (namespaceId) => {
   let moderator;
+  const game = namespaceId;
   const timer = new Timer();
   // ensure the
   const namespace = io
@@ -87,6 +88,15 @@ const createCommandRoom = (namespaceId) => {
       socket.on('pauseTime', () => {
         if (socket.id === moderator) {
           timer.pause();
+        } else {
+          socket.disconnect();
+        }
+      });
+
+      socket.on('startGame', () => {
+        console.log(game);
+        if (socket.id === moderator) {
+          db.startGame(game);
         } else {
           socket.disconnect();
         }
@@ -149,16 +159,16 @@ app.post('/joinNamespace', (req, res) => {
 });
 
 // this needs to be refactored
-app.get('/startGame', (req, res) => {
-  const { townsPeople, roomId } = req.body;
+// app.get('/startGame', (req, res) => {
+//   const { townsPeople, roomId } = req.body;
 
-  db.createGame(townsPeople, roomId)
-    .then((val) => {
-      res.status(201).json(val);
-    })
-    .catch((error) => {
-      res.status(500).json(error);
-    });
-});
+//   db.createGame(townsPeople, roomId)
+//     .then((val) => {
+//       res.status(201).json(val);
+//     })
+//     .catch((error) => {
+//       res.status(500).json(error);
+//     });
+// });
 
 server.listen(port, () => console.log(`listening on port ${port}`));
