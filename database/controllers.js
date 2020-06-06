@@ -52,8 +52,8 @@ exports.db = {
   ),
 
   // rename to 'start game'
-  startGame: (gameId) => {
-    return Room.findById(gameId)
+  startGame: (gameId) => (
+    Room.findById(gameId)
       .then((results) => {
         const {
           wolves,
@@ -63,7 +63,6 @@ exports.db = {
         } = results;
 
         const allPlayersCopy = [...allPlayers];
-        console.log(allPlayers);
 
         const numOfWolves = Math.floor(allPlayersCopy.length / 5);
 
@@ -78,8 +77,6 @@ exports.db = {
             doctor.push(allPlayersCopy.splice(randomPlayerIndex, 1)[0]);
           }
         }
-
-        console.log(results);
         // save to db
         return Room.findByIdAndUpdate(gameId, {
           wolves,
@@ -89,8 +86,8 @@ exports.db = {
         {
           new: true,
         });
-      });
-  },
+      })
+  ),
 
   getAllPlayers: (gameId) => (
     Room.findById(gameId)

@@ -46,7 +46,7 @@ const createChatRooms = (namespaceId) => {
 // room that time and other mod commands will go through
 const createCommandRoom = (namespaceId) => {
   let moderator;
-  const approvedPlayers = {};
+  let gameStarted = false;
   const game = namespaceId;
   const timer = new Timer();
   // ensure the
@@ -55,24 +55,18 @@ const createCommandRoom = (namespaceId) => {
     .on('connection', (socket) => {
       // if there isn't a mod already, verifies before setting to moderator
       // when a new player joins emit a new list of the playernames
-      socket.on('firstConnection', (gameId, username) => {
+      socket.on('firstConnection', (gameId, userId) => {
         if (!moderator) {
           moderator = socket.id;
         } else {
-
-          db.validatePlayer(userId, gameId, roomName, socket.id)
-            .then((isValidPlayer) => {
-              if (isValidPlayer) {
-                validPlayers[socket.id] = true;
-                namespace.emit('message', { username, message: 'joined!' });
+          db.validatePlayer(userId, gameId, 'allPlayers', socket.id)
+            .then((players) => {
+              if (players) {
+                const allPlayers = players.allPlayers.map(({ username }) => username);
+                namespace.emit('newPlayer', allPlayers);
               } else {
                 socket.disconnect();
               }
-            });
-
-          db.getAllPlayers(gameId, username)
-            .then((players) => {
-              namespace.emit('newPlayer', players);
             });
         }
       });
@@ -105,12 +99,68 @@ const createCommandRoom = (namespaceId) => {
         }
       });
 
+      const gatherModAndPlayers = (room) => {
+        const roles = { wolves: { wolvesArr: [] }, seer: {}, doctor: {} };
+        room.wolves.forEach((wolf) => {
+          if (room.moderator.username === wolf.username) {
+            roles.wolves.chatRoomId = wolf._id;
+          } else {
+            let playerSocketId;
+            for (let i = 0; i < room.allPlayers.length; i++) {
+              if (room.allPlayers[i].username === wolf.username) {
+                playerSocketId = room.allPlayers[i].socketId;
+              }
+            }
+
+            roles.wolves.wolvesArr.push({ id: wolf._id, chatRoom: 'wolves', socketId: playerSocketId });
+          }
+        });
+
+        room.seer.forEach((player) => {
+          if (room.moderator.username === player.username) {
+            roles.seer.chatRoomId = player._id;
+          } else {
+            let playerSocketId;
+            for (let i = 0; i < room.allPlayers.length; i++) {
+              if (room.allPlayers[i].username === player.username) {
+                playerSocketId = room.allPlayers[i].socketId;
+              }
+            }
+            roles.seer.id = player._id;
+            roles.seer.chatRoom = 'seer';
+            roles.seer.socketId = playerSocketId;
+          }
+        });
+
+        room.doctor.forEach((player) => {
+          if (room.moderator.username === player.username) {
+            roles.doctor.chatRoomId = player._id;
+          } else {
+            let playerSocketId;
+            for (let i = 0; i < room.allPlayers.length; i++) {
+              if (room.allPlayers[i].username === player.username) {
+                playerSocketId = room.allPlayers[i].socketId;
+              }
+            }
+            roles.doctor.id = player._id;
+            roles.doctor.chatRoom = 'doctor';
+            roles.doctor.socketId = playerSocketId;
+          }
+        });
+
+        return roles;
+      };
+
       socket.on('startGame', () => {
         if (socket.id === moderator) {
-          db.startGame(game)
-            .then((assignedRoles) => {
-              console.log(assignedRoles);
-            });
+          if (!gameStarted) {
+            db.startGame(game)
+              .then((assignedRoles) => {
+                gameStarted = true;
+                // filter for each room and emit that that socket should join the room
+                // console.log(JSON.stringify(gatherModAndPlayers(assignedRoles)));
+              });
+          }
         } else {
           socket.disconnect();
         }
