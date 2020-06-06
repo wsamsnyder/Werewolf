@@ -24,11 +24,12 @@ exports.db = {
 
         return gameRoom.save()
           .then((updatedTown) => {
-            const { townsPeople, moderator } = updatedTown;
+            const { townsPeople, moderator, allPlayers } = updatedTown;
             const modUsername = moderator.username;
 
             let townRoomId;
             let townsPersonId;
+            let controlSocketId;
             for (let i = 0; i < townsPeople.length; i++) {
               if (townsPeople[i].username === username && townsPeople[i].socketId === undefined) {
                 townsPersonId = townsPeople[i]._id;
@@ -37,7 +38,14 @@ exports.db = {
                 townRoomId = townsPeople[i]._id;
               }
             }
-            if (townRoomId && townsPersonId) return { townRoomId, townsPersonId };
+            for (let i = 0; i < allPlayers.length; i++) {
+              if (allPlayers[i].username === username && allPlayers[i].socketId === undefined) {
+                controlSocketId = allPlayers[i]._id;
+              }
+            }
+            if (townRoomId && townsPersonId && controlSocketId) {
+              return { townRoomId, townsPersonId, controlSocketId };
+            }
             return null;
           });
       })
@@ -45,8 +53,7 @@ exports.db = {
 
   // rename to 'start game'
   startGame: (gameId) => {
-
-    Room.findById(gameId)
+    return Room.findById(gameId)
       .then((results) => {
         const {
           wolves,
@@ -56,6 +63,7 @@ exports.db = {
         } = results;
 
         const allPlayersCopy = [...allPlayers];
+        console.log(allPlayers);
 
         const numOfWolves = Math.floor(allPlayersCopy.length / 5);
 
@@ -71,6 +79,7 @@ exports.db = {
           }
         }
 
+        console.log(results);
         // save to db
         return Room.findByIdAndUpdate(gameId, {
           wolves,
@@ -97,8 +106,7 @@ exports.db = {
         for (let i = 0; i < room.length; i++) {
           if (room[i]._id.toString() === userId && room[i].socketId === undefined) {
             room[i].socketId = socketId;
-            return gameRoom.save()
-              .then(() => true);
+            return gameRoom.save();
           }
         }
         return false;

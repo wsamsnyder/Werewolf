@@ -46,6 +46,7 @@ const createChatRooms = (namespaceId) => {
 // room that time and other mod commands will go through
 const createCommandRoom = (namespaceId) => {
   let moderator;
+  const approvedPlayers = {};
   const game = namespaceId;
   const timer = new Timer();
   // ensure the
@@ -54,11 +55,22 @@ const createCommandRoom = (namespaceId) => {
     .on('connection', (socket) => {
       // if there isn't a mod already, verifies before setting to moderator
       // when a new player joins emit a new list of the playernames
-      socket.on('firstConnection', (gameId) => {
+      socket.on('firstConnection', (gameId, username) => {
         if (!moderator) {
           moderator = socket.id;
         } else {
-          db.getAllPlayers(gameId)
+
+          db.validatePlayer(userId, gameId, roomName, socket.id)
+            .then((isValidPlayer) => {
+              if (isValidPlayer) {
+                validPlayers[socket.id] = true;
+                namespace.emit('message', { username, message: 'joined!' });
+              } else {
+                socket.disconnect();
+              }
+            });
+
+          db.getAllPlayers(gameId, username)
             .then((players) => {
               namespace.emit('newPlayer', players);
             });
@@ -94,9 +106,11 @@ const createCommandRoom = (namespaceId) => {
       });
 
       socket.on('startGame', () => {
-        console.log(game);
         if (socket.id === moderator) {
-          db.startGame(game);
+          db.startGame(game)
+            .then((assignedRoles) => {
+              console.log(assignedRoles);
+            });
         } else {
           socket.disconnect();
         }
@@ -149,8 +163,8 @@ app.post('/createNamespace', (req, res) => {
 app.post('/joinNamespace', (req, res) => {
   const { username, roomId } = req.body;
   db.joinGame(username, roomId)
-    .then(({ townRoomId, townsPersonId }) => {
-      res.status(201).json({ townRoomId, townsPersonId });
+    .then(({ townRoomId, townsPersonId, controlSocketId }) => {
+      res.status(201).json({ townRoomId, townsPersonId, controlSocketId });
     })
     .catch((error) => {
       console.log(error);

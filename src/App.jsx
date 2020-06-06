@@ -25,7 +25,7 @@ const App = () => {
   const [town, setTown] = useState('');
   const [chatSockets, setChatSockets] = useState([]);
   const [room, setRoom] = useState('');
-  // const [commandRoom, setCommandRoom] = useState('');
+  const [controlSocketIdentity, setControlSocketIdentity] = useState('');
   const [moderator, setModerator] = useState(false);
 
   let username;
@@ -69,7 +69,7 @@ const App = () => {
 
     // send user information to the server
     api.joinGameRoom(newUsername, roomId)
-      .then(({ townRoomId, townsPersonId }) => {
+      .then(({ townRoomId, townsPersonId, controlSocketId }) => {
         setTown({
           roomId: townRoomId,
           username,
@@ -77,6 +77,7 @@ const App = () => {
           gameId: roomId,
           roomName: 'townsPeople',
         });
+        setControlSocketIdentity(controlSocketId);
         setRoom(roomId);
       });
   };
@@ -102,6 +103,7 @@ const App = () => {
           moderator={moderator}
         />
         <CommandConsole
+          controlSocketIdentity={controlSocketIdentity}
           connection={room}
           moderator={moderator}
         />

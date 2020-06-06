@@ -12,7 +12,7 @@ const CommandConsoleDiv = styled.div`
   text-align: center;
 `;
 
-const CommandConsole = ({ connection, moderator }) => {
+const CommandConsole = ({ connection, moderator, controlSocketIdentity }) => {
   const [players, setPlayers] = useState([]);
   const [time, setTime] = useState(0);
   const [controlSocket, setControlSocket] = useState({});
@@ -26,7 +26,7 @@ const CommandConsole = ({ connection, moderator }) => {
   // let timeControlSocket;
 
   useEffect(() => {
-    const newCommandSocket = new CommandSocket(connection);
+    const newCommandSocket = new CommandSocket(connection, controlSocketIdentity);
     // console.log(newCommandSocket);
     // listeners independent of emits, doesn't return anything
     newCommandSocket.initialListeners(playerListCallback, timeCallback);
@@ -58,8 +58,12 @@ const CommandConsole = ({ connection, moderator }) => {
   );
 };
 
+CommandConsole.defaultProps = {
+  username: '',
+};
 
 CommandConsole.propTypes = {
+  username: PropTypes.string,
   connection: PropTypes.string.isRequired,
   moderator: PropTypes.bool.isRequired,
 };

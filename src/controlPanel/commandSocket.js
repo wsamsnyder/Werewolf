@@ -2,7 +2,8 @@ import io from 'socket.io-client';
 
 // joins namespace and the townspeople chat
 class CommandSocket {
-  constructor(gameId) {
+  constructor(gameId, username) {
+    this.username = username;
     this.gameId = gameId;
     this.namespace = io.connect(`/${this.gameId}`);
   }
@@ -10,7 +11,7 @@ class CommandSocket {
   initialListeners(playerListCb, timeCb) {
     this.namespace.on('connect', () => {
       console.log('connected', this.gameId);
-      this.namespace.emit('firstConnection', this.gameId);
+      this.namespace.emit('firstConnection', this.gameId, this.username);
     });
 
     this.namespace.on('time', (time) => timeCb(time));
