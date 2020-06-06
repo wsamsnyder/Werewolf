@@ -99,6 +99,7 @@ const createCommandRoom = (namespaceId) => {
         }
       });
 
+      // this should be moved to the DB, doesn't make a ton of sense to be here ////////////////////////////////
       const gatherModAndPlayers = (room) => {
         const roles = { wolves: { wolvesArr: [] }, seer: {}, doctor: {} };
         room.wolves.forEach((wolf) => {
@@ -158,7 +159,7 @@ const createCommandRoom = (namespaceId) => {
               .then((assignedRoles) => {
                 gameStarted = true;
                 // filter for each room and emit that that socket should join the room
-                // console.log(JSON.stringify(gatherModAndPlayers(assignedRoles)));
+                console.log(JSON.stringify(gatherModAndPlayers(assignedRoles)));
               });
           }
         } else {
