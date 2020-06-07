@@ -156,10 +156,35 @@ const createCommandRoom = (namespaceId) => {
         if (socket.id === moderator) {
           if (!gameStarted) {
             db.startGame(game)
-              .then((assignedRoles) => {
+              .then(({ wolves, doctor, seer }) => {
                 gameStarted = true;
                 // filter for each room and emit that that socket should join the room
-                console.log(JSON.stringify(gatherModAndPlayers(assignedRoles)));
+                // console.log(JSON.stringify(gatherModAndPlayers(assignedRoles)));
+                // const roles = { wolves: { wolvesArr: [] }, seer: {}, doctor: {} };
+
+                // This whole process needs to be cleaned up and factored out
+                // Wrote everything Twice
+                io.to(seer.socketId).emit('roleAssignment', {
+                  roomName: seer.chatRoom,
+                  playerId: seer.id,
+                  roomId: seer.chatroomId,
+                });
+
+                io.to(doctor.socketId).emit('roleAssignment', {
+                  roomName: doctor.chatRoom,
+                  playerId: doctor.id,
+                  roomId: doctor.chatroomId,
+                });
+
+                // roles.wolves.chatRoomId = wolf._id;
+                // { id: wolf._id, chatRoom: 'wolves', socketId: playerSocketId }
+                wolves.forEach((wolf) => {
+                  io.to(wolf.socketId).emit('roleAssignment', {
+                    roomName: wolf.chatRoom,
+                    playerId: wolf.id,
+                    roomId: wolf.chatroomId,
+                  });
+                });
               });
           }
         } else {

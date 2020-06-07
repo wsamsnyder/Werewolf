@@ -59,11 +59,11 @@ const CommandConsole = ({ connection, moderator, controlSocketIdentity }) => {
 };
 
 CommandConsole.defaultProps = {
-  username: '',
+  controlSocketIdentity: '',
 };
 
 CommandConsole.propTypes = {
-  username: PropTypes.string,
+  controlSocketIdentity: PropTypes.string,
   connection: PropTypes.string.isRequired,
   moderator: PropTypes.bool.isRequired,
 };
