@@ -164,17 +164,17 @@ const createCommandRoom = (namespaceId) => {
                 const { wolves, doctor, seer } = gatherModAndPlayers(assignedRoles);
 
                 // This whole process needs to be cleaned up and factored out
-                // Wrote everything Twice
-                console.log('wolves', wolves, 'doctor', doctor, 'seer', seer);
+                // Wrote Everything Twice
+                // console.log('wolves', wolves, 'doctor', doctor, 'seer', seer);
                 socket.broadcast.to(seer.socketId).emit('roleAssignment', {
                   roomName: seer.chatRoom,
-                  playerId: seer.id,
+                  userId: seer.id,
                   roomId: seer.chatRoomId,
                 });
 
                 socket.broadcast.to(doctor.socketId).emit('roleAssignment', {
                   roomName: doctor.chatRoom,
-                  playerId: doctor.id,
+                  userId: doctor.id,
                   roomId: doctor.chatRoomId,
                 });
 
@@ -183,7 +183,7 @@ const createCommandRoom = (namespaceId) => {
                 wolves.wolvesArr.forEach((wolf) => {
                   socket.broadcast.to(wolf.socketId).emit('roleAssignment', {
                     roomName: wolf.chatRoom,
-                    playerId: wolf.id,
+                    userId: wolf.id,
                     // roomId is not showing up?
                     roomId: wolves.chatRoomId,
                   });

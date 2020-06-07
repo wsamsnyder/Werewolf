@@ -22,7 +22,7 @@ class CommandSocket {
 
     this.namespace.on('roleAssignment', (role) => {
       roleAssignmentCb(role);
-      // console.log('role assigned!', role);
+      console.log('role assigned!', role);
     });
 
     // this.namespace.on('disconnect', () => {

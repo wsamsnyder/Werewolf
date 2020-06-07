@@ -23,13 +23,14 @@ const ChatRoom = ({ roomData, location, moderator }) => {
 
   const {
     roomId,
-    username = 'sam',
+    username,
     userId,
     gameId,
     roomName,
   } = roomData;
 
   useEffect(() => {
+    console.log(roomData);
     const newChatSocket = new Chat(roomId, username, userId, gameId, roomName);
     setSocket(newChatSocket);
 

@@ -31,10 +31,10 @@ const CommandConsole = ({
   // let timeControlSocket;
 
   useEffect(() => {
-    const newCommandSocket = new CommandSocket(connection, controlSocketIdentity, roleAssignmentCb);
+    const newCommandSocket = new CommandSocket(connection, controlSocketIdentity);
     // console.log(newCommandSocket);
     // listeners independent of emits, doesn't return anything
-    newCommandSocket.initialListeners(playerListCallback, timeCallback);
+    newCommandSocket.initialListeners(playerListCallback, timeCallback, roleAssignmentCb);
     // timeControlSocket = newCommandSocket;
     setControlSocket(newCommandSocket);
   }, []);

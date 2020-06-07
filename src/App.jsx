@@ -27,15 +27,13 @@ const App = () => {
   const [room, setRoom] = useState('');
   const [controlSocketIdentity, setControlSocketIdentity] = useState('');
   const [moderator, setModerator] = useState(false);
-
-  let username;
+  const [username, setUsername] = useState('');
   // let room;
 
   // make a new room with the namespace of the id returned
   const createGameRoom = (newUsername) => {
-    username = newUsername;
     // room = gameId;
-    api.createGameRoom(username)
+    api.createGameRoom(newUsername)
       .then(({ gameId, townChat, otherChats }) => {
         // room = gameId;
         // could push to state each time but only want to render when complete
@@ -43,7 +41,7 @@ const App = () => {
         otherChats.forEach(({ roomName, roomId }) => {
           rooms.push({
             roomId,
-            username,
+            username: newUsername,
             userId: roomId,
             gameId,
             roomName,
@@ -52,11 +50,12 @@ const App = () => {
         const { townId, townName } = townChat;
         setTown({
           roomId: townId,
-          username,
+          username: newUsername,
           userId: townId,
           gameId,
           roomName: townName,
         });
+        setUsername(newUsername);
         setModerator(true);
         setChatSockets(rooms);
         setRoom(gameId);
@@ -64,22 +63,32 @@ const App = () => {
   };
 
   const joinGameRoom = (newUsername, roomId) => {
-    username = newUsername;
-    // room = roomId;
-
     // send user information to the server
     api.joinGameRoom(newUsername, roomId)
       .then(({ townRoomId, townsPersonId, controlSocketId }) => {
         setTown({
           roomId: townRoomId,
-          username,
+          username: newUsername,
           userId: townsPersonId,
           gameId: roomId,
           roomName: 'townsPeople',
         });
+        setUsername(newUsername);
         setControlSocketIdentity(controlSocketId);
         setRoom(roomId);
       });
+  };
+
+  const roleAssignmentCb = ({ roomName, userId, roomId }) => {
+    const roleChat = {
+      username,
+      roomName,
+      userId,
+      roomId,
+      gameId: room,
+    };
+
+    setChatSockets([roleChat]);
   };
 
   const render = (roomToJoin) => {
@@ -106,7 +115,7 @@ const App = () => {
           controlSocketIdentity={controlSocketIdentity}
           connection={room}
           moderator={moderator}
-          roleAssignmentCb={(roleChat) => setChatSockets(roleChat)}
+          roleAssignmentCb={roleAssignmentCb}
         />
         {
           chatSockets.map((roomData, idx) => (
