@@ -61,6 +61,7 @@ exports.db = {
           seer,
           allPlayers,
         } = results;
+        // console.log('first results', results);
 
         const allPlayersCopy = [...allPlayers];
 
@@ -70,11 +71,14 @@ exports.db = {
           const randomPlayerIndex = Math.floor(Math.random() * allPlayersCopy.length);
 
           if (wolves.length < numOfWolves + 1) {
-            wolves.push(allPlayersCopy.splice(randomPlayerIndex, 1)[0]);
+            const { username } = allPlayersCopy.splice(randomPlayerIndex, 1)[0];
+            wolves.push({ username });
           } else if (seer.length + 1 <= 2) {
-            seer.push(allPlayersCopy.splice(randomPlayerIndex, 1)[0]);
+            const { username } = allPlayersCopy.splice(randomPlayerIndex, 1)[0];
+            seer.push({ username });
           } else if (doctor.length + 1 <= 2) {
-            doctor.push(allPlayersCopy.splice(randomPlayerIndex, 1)[0]);
+            const { username } = allPlayersCopy.splice(randomPlayerIndex, 1)[0];
+            doctor.push({ username });
           }
         }
         // save to db
@@ -101,11 +105,14 @@ exports.db = {
       .then((gameRoom) => {
         const room = gameRoom[chatRoom];
         for (let i = 0; i < room.length; i++) {
+          // console.log(room[i]._id.toString() === userId, userId, room[i]._id.toString(), room[i].socketId === undefined);
           if (room[i]._id.toString() === userId && room[i].socketId === undefined) {
+            // console.log(room, ' should be valid from controllers');
             room[i].socketId = socketId;
             return gameRoom.save();
           }
         }
+        // console.log('is not valid in controllers?');
         return false;
       })
   ),

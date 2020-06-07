@@ -24,10 +24,13 @@ const createChatRooms = (namespaceId) => {
         // see if the player's userId is already in the db w/socketId. reject the connection if true
         db.validatePlayer(userId, gameId, roomName, socket.id)
           .then((isValidPlayer) => {
+            console.log(!!isValidPlayer);
             if (isValidPlayer) {
+              console.log('is valid');
               validPlayers[socket.id] = true;
               namespace.emit('message', { username, message: 'joined!' });
             } else {
+              console.log('is NOT valid');
               socket.disconnect();
             }
           });
@@ -157,6 +160,7 @@ const createCommandRoom = (namespaceId) => {
           if (!gameStarted) {
             db.startGame(game)
               .then((assignedRoles) => {
+                console.log(assignedRoles);
                 gameStarted = true;
                 // filter for each room and emit that that socket should join the room
                 // console.log(JSON.stringify(gatherModAndPlayers(assignedRoles)));
