@@ -24,13 +24,10 @@ const createChatRooms = (namespaceId) => {
         // see if the player's userId is already in the db w/socketId. reject the connection if true
         db.validatePlayer(userId, gameId, roomName, socket.id)
           .then((isValidPlayer) => {
-            console.log(!!isValidPlayer);
             if (isValidPlayer) {
-              console.log('is valid');
               validPlayers[socket.id] = true;
               namespace.emit('message', { username, message: 'joined!' });
             } else {
-              console.log('is NOT valid');
               socket.disconnect();
             }
           });
@@ -115,7 +112,6 @@ const createCommandRoom = (namespaceId) => {
                 playerSocketId = room.allPlayers[i].socketId;
               }
             }
-
             roles.wolves.wolvesArr.push({ id: wolf._id, chatRoom: 'wolves', socketId: playerSocketId });
           }
         });
@@ -162,14 +158,10 @@ const createCommandRoom = (namespaceId) => {
               .then((assignedRoles) => {
                 console.log(assignedRoles);
                 gameStarted = true;
-                // filter for each room and emit that that socket should join the room
-                // console.log(JSON.stringify(gatherModAndPlayers(assignedRoles)));
-                // const roles = { wolves: { wolvesArr: [] }, seer: {}, doctor: {} };
                 const { wolves, doctor, seer } = gatherModAndPlayers(assignedRoles);
 
                 // This whole process needs to be cleaned up and factored out
                 // Wrote Everything Twice
-                // console.log('wolves', wolves, 'doctor', doctor, 'seer', seer);
                 socket.broadcast.to(seer.socketId).emit('roleAssignment', {
                   roomName: seer.chatRoom,
                   userId: seer.id,
@@ -182,13 +174,10 @@ const createCommandRoom = (namespaceId) => {
                   roomId: doctor.chatRoomId,
                 });
 
-                // roles.wolves.chatRoomId = wolf._id;
-                // { id: wolf._id, chatRoom: 'wolves', socketId: playerSocketId }
                 wolves.wolvesArr.forEach((wolf) => {
                   socket.broadcast.to(wolf.socketId).emit('roleAssignment', {
                     roomName: wolf.chatRoom,
                     userId: wolf.id,
-                    // roomId is not showing up?
                     roomId: wolves.chatRoomId,
                   });
                 });

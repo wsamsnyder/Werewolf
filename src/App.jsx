@@ -32,10 +32,8 @@ const App = () => {
 
   // make a new room with the namespace of the id returned
   const createGameRoom = (newUsername) => {
-    // room = gameId;
     api.createGameRoom(newUsername)
       .then(({ gameId, townChat, otherChats }) => {
-        // room = gameId;
         // could push to state each time but only want to render when complete
         const rooms = [];
         otherChats.forEach(({ roomName, roomId }) => {

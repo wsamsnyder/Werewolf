@@ -22,24 +22,19 @@ const CommandConsole = ({
   const [time, setTime] = useState(0);
   const [controlSocket, setControlSocket] = useState({});
   const [gameStarted, setGameStarted] = useState(false);
-  // const [socket, setSocket] = useState('');
 
   const timeCallback = (newTime) => setTime(newTime);
 
   const playerListCallback = (allPlayers) => setPlayers(allPlayers);
 
-  // let timeControlSocket;
-
   useEffect(() => {
     const newCommandSocket = new CommandSocket(connection, controlSocketIdentity);
-    // console.log(newCommandSocket);
-    // listeners independent of emits, doesn't return anything
     newCommandSocket.initialListeners(playerListCallback, timeCallback, roleAssignmentCb);
-    // timeControlSocket = newCommandSocket;
     setControlSocket(newCommandSocket);
   }, []);
 
   const startGame = () => {
+    setGameStarted(true);
     controlSocket.startGame();
   };
 
