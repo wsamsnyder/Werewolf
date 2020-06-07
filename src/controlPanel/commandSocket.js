@@ -8,7 +8,7 @@ class CommandSocket {
     this.namespace = io.connect(`/${this.gameId}`);
   }
 
-  initialListeners(playerListCb, timeCb) {
+  initialListeners(playerListCb, timeCb, roleAssignmentCb) {
     this.namespace.on('connect', () => {
       console.log('connected', this.gameId);
       this.namespace.emit('firstConnection', this.gameId, this.username);
@@ -18,6 +18,11 @@ class CommandSocket {
 
     this.namespace.on('newPlayer', (players) => {
       playerListCb(players);
+    });
+
+    this.namespace.on('roleAssignment', (role) => {
+      roleAssignmentCb(role);
+      // console.log('role assigned!', role);
     });
 
     // this.namespace.on('disconnect', () => {

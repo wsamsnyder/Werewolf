@@ -156,33 +156,36 @@ const createCommandRoom = (namespaceId) => {
         if (socket.id === moderator) {
           if (!gameStarted) {
             db.startGame(game)
-              .then(({ wolves, doctor, seer }) => {
+              .then((assignedRoles) => {
                 gameStarted = true;
                 // filter for each room and emit that that socket should join the room
                 // console.log(JSON.stringify(gatherModAndPlayers(assignedRoles)));
                 // const roles = { wolves: { wolvesArr: [] }, seer: {}, doctor: {} };
+                const { wolves, doctor, seer } = gatherModAndPlayers(assignedRoles);
 
                 // This whole process needs to be cleaned up and factored out
                 // Wrote everything Twice
-                io.to(seer.socketId).emit('roleAssignment', {
+                console.log('wolves', wolves, 'doctor', doctor, 'seer', seer);
+                socket.broadcast.to(seer.socketId).emit('roleAssignment', {
                   roomName: seer.chatRoom,
                   playerId: seer.id,
-                  roomId: seer.chatroomId,
+                  roomId: seer.chatRoomId,
                 });
 
-                io.to(doctor.socketId).emit('roleAssignment', {
+                socket.broadcast.to(doctor.socketId).emit('roleAssignment', {
                   roomName: doctor.chatRoom,
                   playerId: doctor.id,
-                  roomId: doctor.chatroomId,
+                  roomId: doctor.chatRoomId,
                 });
 
                 // roles.wolves.chatRoomId = wolf._id;
                 // { id: wolf._id, chatRoom: 'wolves', socketId: playerSocketId }
-                wolves.forEach((wolf) => {
-                  io.to(wolf.socketId).emit('roleAssignment', {
+                wolves.wolvesArr.forEach((wolf) => {
+                  socket.broadcast.to(wolf.socketId).emit('roleAssignment', {
                     roomName: wolf.chatRoom,
                     playerId: wolf.id,
-                    roomId: wolf.chatroomId,
+                    // roomId is not showing up?
+                    roomId: wolves.chatRoomId,
                   });
                 });
               });

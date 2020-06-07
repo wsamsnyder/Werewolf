@@ -12,7 +12,12 @@ const CommandConsoleDiv = styled.div`
   text-align: center;
 `;
 
-const CommandConsole = ({ connection, moderator, controlSocketIdentity }) => {
+const CommandConsole = ({
+  connection,
+  moderator,
+  controlSocketIdentity,
+  roleAssignmentCb,
+}) => {
   const [players, setPlayers] = useState([]);
   const [time, setTime] = useState(0);
   const [controlSocket, setControlSocket] = useState({});
@@ -26,7 +31,7 @@ const CommandConsole = ({ connection, moderator, controlSocketIdentity }) => {
   // let timeControlSocket;
 
   useEffect(() => {
-    const newCommandSocket = new CommandSocket(connection, controlSocketIdentity);
+    const newCommandSocket = new CommandSocket(connection, controlSocketIdentity, roleAssignmentCb);
     // console.log(newCommandSocket);
     // listeners independent of emits, doesn't return anything
     newCommandSocket.initialListeners(playerListCallback, timeCallback);
@@ -45,7 +50,9 @@ const CommandConsole = ({ connection, moderator, controlSocketIdentity }) => {
           ? <button type="button" onClick={() => startGame()}>Start Game</button>
           : ''
       }
-      { `${(time / 60).toString().split('.')[0]}:${(time % 60).toString().padStart(2, '0')}`}
+      <div>
+        { `${(time / 60).toString().split('.')[0]}:${(time % 60).toString().padStart(2, '0')}`}
+      </div>
       {moderator
         ? (
           <TimeControls
@@ -53,7 +60,11 @@ const CommandConsole = ({ connection, moderator, controlSocketIdentity }) => {
           />
         )
         : ''}
-      { players }
+      { players.map((player) => (
+        <div>
+          { player }
+        </div>
+      )) }
     </CommandConsoleDiv>
   );
 };
@@ -63,6 +74,7 @@ CommandConsole.defaultProps = {
 };
 
 CommandConsole.propTypes = {
+  roleAssignmentCb: PropTypes.func.isRequired,
   controlSocketIdentity: PropTypes.string,
   connection: PropTypes.string.isRequired,
   moderator: PropTypes.bool.isRequired,

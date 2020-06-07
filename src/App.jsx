@@ -106,6 +106,7 @@ const App = () => {
           controlSocketIdentity={controlSocketIdentity}
           connection={room}
           moderator={moderator}
+          roleAssignmentCb={(roleChat) => setChatSockets(roleChat)}
         />
         {
           chatSockets.map((roomData, idx) => (
