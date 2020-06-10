@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import CommandSocket from './commandSocket';
 import TimeControls from './TimeControls';
+import Players from './Players';
 
 
 const CommandConsoleDiv = styled.div`
@@ -55,11 +56,9 @@ const CommandConsole = ({
           />
         )
         : ''}
-      { players.map((player) => (
-        <div>
-          { player }
-        </div>
-      )) }
+      <Players
+        players={players}
+      />
     </CommandConsoleDiv>
   );
 };

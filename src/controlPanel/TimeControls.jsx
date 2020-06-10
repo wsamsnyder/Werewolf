@@ -3,19 +3,9 @@ import PropTypes from 'prop-types';
 // import styled from 'styled-components';
 
 
-// const CommandConsoleDiv = styled.div`
-//   grid-column: 2 / 3;
-//   grid-row: 3;
-//   text-align: center;
-// `;
-
 const TimeControls = ({ controlSocket }) => {
   const [newTime, setNewTime] = useState();
 
-
-  // const {
-  //   startTime,
-  // } = timeControlSocket;
 
   const handleTimeSubmission = (e) => {
     e.preventDefault();
