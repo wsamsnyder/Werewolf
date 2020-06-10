@@ -30,7 +30,6 @@ const ChatRoom = ({ roomData, location, moderator }) => {
   } = roomData;
 
   useEffect(() => {
-    console.log(roomData);
     const newChatSocket = new Chat(roomId, username, userId, gameId, roomName);
     setSocket(newChatSocket);
 
