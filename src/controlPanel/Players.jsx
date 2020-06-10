@@ -1,17 +1,35 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-// import styled from 'styled-components';
+import styled from 'styled-components';
+
+import PlayerVoteButton from './PlayerVoteButton';
+
+const PlayerDiv = styled.div`
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-evenly;
+`;
 
 
 const Players = ({ allPlayers, voteCallback }) => {
-  const [hasVoted, setHasVoted] = useState();
+  const [hasVoted, setHasVoted] = useState(false);
 
   // const handleTimeSubmission = (e) => {
   // };
 
   return (
-    <button>
-    </button>
+    <PlayerDiv>
+      {
+        hasVoted
+          ? allPlayers.map((player) => (
+            <PlayerVoteButton
+              key={player}
+              player={player}
+            />
+          ))
+          : ''
+      }
+    </PlayerDiv>
   );
 };
 
