@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import PlayerVoteButton from './PlayerVoteButton';
 
-const PlayerDiv = styled.div`
+const PlayersDiv = styled.div`
   display: flex;
   flex-flow: row wrap;
   justify-content: space-evenly;
@@ -18,18 +18,18 @@ const Players = ({ allPlayers, voteCallback }) => {
   // };
 
   return (
-    <PlayerDiv>
+    <PlayersDiv>
       {
         hasVoted
-          ? allPlayers.map((player) => (
+          ? ''
+          : allPlayers.map((player) => (
             <PlayerVoteButton
               key={player}
               player={player}
             />
           ))
-          : ''
       }
-    </PlayerDiv>
+    </PlayersDiv>
   );
 };
 

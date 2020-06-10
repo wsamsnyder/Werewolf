@@ -49,15 +49,17 @@ const CommandConsole = ({
       <div>
         { `${(time / 60).toString().split('.')[0]}:${(time % 60).toString().padStart(2, '0')}`}
       </div>
-      {moderator
-        ? (
-          <TimeControls
-            controlSocket={controlSocket}
-          />
-        )
-        : ''}
+      {
+        moderator
+          ? (
+            <TimeControls
+              controlSocket={controlSocket}
+            />
+          )
+          : ''
+        }
       <Players
-        players={players}
+        allPlayers={players}
       />
     </CommandConsoleDiv>
   );
