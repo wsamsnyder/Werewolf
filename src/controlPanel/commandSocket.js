@@ -30,6 +30,10 @@ class CommandSocket {
     // });
   }
 
+  roundCycles(callback) {
+    this.namespace.on('cycleChange', (cycle) => callback(cycle));
+  }
+
   // setTime
   setTime(roundTime) {
     console.log('setting time');

@@ -60,6 +60,7 @@ const CommandConsole = ({
         }
       <Players
         allPlayers={players}
+        socket={controlSocket}
       />
     </CommandConsoleDiv>
   );
