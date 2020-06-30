@@ -50,6 +50,7 @@ const createCommandRoom = (namespaceId) => {
   const validPlayers = {};
   const game = namespaceId;
   const timer = new Timer();
+  let playerVotes;
   // ensure the
   const namespace = io
     .of(`/${namespaceId}`)
@@ -97,6 +98,15 @@ const createCommandRoom = (namespaceId) => {
       socket.on('pauseTime', () => {
         if (socket.id === moderator) {
           timer.pause();
+        } else {
+          socket.disconnect();
+        }
+      });
+
+      socket.on('startVote', () => {
+        if (socket.id === moderator) {
+          console.log('starting vote');
+          playerVotes = { ...validPlayers };
         } else {
           socket.disconnect();
         }
