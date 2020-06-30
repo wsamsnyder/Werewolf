@@ -21,6 +21,15 @@ class CommandSocket {
     this.namespace.on('roleAssignment', (role) => {
       roleAssignmentCb(role);
     });
+
+    this.namespace.on('vote', (votingPlayer, playerVotedFor, voteTally) => {
+      console.log('player: ', votingPlayer, ' voted for ', playerVotedFor);
+      console.log('the vote totals so far are: ', voteTally);
+    });
+
+    this.namespace.on('votingStart', () => {
+      console.log('Voting has started!');
+    });
   }
 
   startVote() {
@@ -32,8 +41,10 @@ class CommandSocket {
   }
 
   vote(player) {
-    this.namespace.emit('vote', this.username, this.gameId, player);
+    this.namespace.emit('vote', this.username, player);
   }
+
+
 
   setTime(roundTime) {
     this.namespace.emit('setTime', roundTime);
