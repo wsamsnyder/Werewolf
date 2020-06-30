@@ -27,6 +27,10 @@ class CommandSocket {
     this.namespace.emit('startVote');
   }
 
+  endVote() {
+    this.namespace.emit('endVote');
+  }
+
   vote(player) {
     this.namespace.emit('vote', this.username, this.gameId, player);
   }
