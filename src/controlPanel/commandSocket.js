@@ -30,6 +30,10 @@ class CommandSocket {
     // });
   }
 
+  startVote() {
+    this.namespace.emit('startVote');
+  }
+
   vote(player) {
     console.log(player);
     this.namespace.emit('vote', this.username, this.gameId, player);

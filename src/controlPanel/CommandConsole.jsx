@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import CommandSocket from './commandSocket';
 import TimeControls from './TimeControls';
 import Players from './Players';
+import ModeratorVotingPanel from './ModeratorVotingPanel';
 
 
 const CommandConsoleDiv = styled.div`
@@ -52,9 +53,14 @@ const CommandConsole = ({
       {
         moderator
           ? (
-            <TimeControls
-              controlSocket={controlSocket}
-            />
+            <>
+              <TimeControls
+                controlSocket={controlSocket}
+              />
+              <ModeratorVotingPanel
+                controlSocket={controlSocket}
+              />
+            </>
           )
           : ''
         }
