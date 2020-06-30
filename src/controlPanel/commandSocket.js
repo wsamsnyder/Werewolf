@@ -30,9 +30,14 @@ class CommandSocket {
     // });
   }
 
-  roundCycles(callback) {
-    this.namespace.on('cycleChange', (cycle) => callback(cycle));
+  vote(player) {
+    console.log(player);
+    this.namespace.emit('vote', this.username, this.gameId, player);
   }
+
+  // roundCycles(callback) {
+  //   this.namespace.on('cycleChange', (cycle) => callback(cycle));
+  // }
 
   // setTime
   setTime(roundTime) {

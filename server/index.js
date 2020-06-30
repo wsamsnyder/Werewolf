@@ -47,6 +47,7 @@ const createChatRooms = (namespaceId) => {
 const createCommandRoom = (namespaceId) => {
   let moderator;
   let gameStarted = false;
+  const validPlayers = {};
   const game = namespaceId;
   const timer = new Timer();
   // ensure the
@@ -62,6 +63,7 @@ const createCommandRoom = (namespaceId) => {
           db.validatePlayer(userId, gameId, 'allPlayers', socket.id)
             .then((players) => {
               if (players) {
+                validPlayers[socket.id] = true;
                 const allPlayers = players.allPlayers.map(({ username }) => username);
                 namespace.emit('newPlayer', allPlayers);
               } else {
@@ -86,6 +88,7 @@ const createCommandRoom = (namespaceId) => {
         console.log('setting time', amountOfTime);
         if (socket.id === moderator) {
           timer.set(amountOfTime);
+          namespace.emit('time', amountOfTime);
         } else {
           socket.disconnect();
         }
@@ -94,6 +97,14 @@ const createCommandRoom = (namespaceId) => {
       socket.on('pauseTime', () => {
         if (socket.id === moderator) {
           timer.pause();
+        } else {
+          socket.disconnect();
+        }
+      });
+
+      socket.on('vote', (username, gameId, player) => {
+        if (validPlayers[socket.id]) {
+          console.log('player voting: ', username, 'gameId: ', gameId, 'voting for: ', player);
         } else {
           socket.disconnect();
         }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
@@ -11,17 +11,11 @@ const PlayersDiv = styled.div`
 `;
 
 
-const Players = ({ allPlayers, socket }) => {
-
-  // const handleTimeSubmission = (e) => {
-  // };
+const Players = ({ allPlayers, controlSocket }) => {
   const voteCastCallback = (player) => {
+    controlSocket.vote(player);
     console.log(player);
   };
-
-  // useEffect(() => {
-
-  // });
 
   return (
     <PlayersDiv>
@@ -43,7 +37,9 @@ const Players = ({ allPlayers, socket }) => {
 
 Players.propTypes = {
   allPlayers: PropTypes.arrayOf(PropTypes.string).isRequired,
-  socket: PropTypes.shape({}).isRequired,
+  controlSocket: PropTypes.shape({
+    vote: PropTypes.func,
+  }).isRequired,
 };
 
 export default Players;
