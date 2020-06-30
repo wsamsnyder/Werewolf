@@ -1,6 +1,5 @@
 import io from 'socket.io-client';
 
-// joins namespace and the townspeople chat
 class CommandSocket {
   constructor(gameId, username) {
     this.username = username;
@@ -10,7 +9,6 @@ class CommandSocket {
 
   initialListeners(playerListCb, timeCb, roleAssignmentCb) {
     this.namespace.on('connect', () => {
-      console.log('connected', this.gameId);
       this.namespace.emit('firstConnection', this.gameId, this.username);
     });
 
@@ -22,12 +20,7 @@ class CommandSocket {
 
     this.namespace.on('roleAssignment', (role) => {
       roleAssignmentCb(role);
-      console.log('role assigned!', role);
     });
-
-    // this.namespace.on('disconnect', () => {
-    //   callback({ username: this.username, message: 'has disconnected' });
-    // });
   }
 
   startVote() {
@@ -35,35 +28,22 @@ class CommandSocket {
   }
 
   vote(player) {
-    console.log(player);
     this.namespace.emit('vote', this.username, this.gameId, player);
   }
 
-  // roundCycles(callback) {
-  //   this.namespace.on('cycleChange', (cycle) => callback(cycle));
-  // }
-
-  // setTime
   setTime(roundTime) {
-    console.log('setting time');
     this.namespace.emit('setTime', roundTime);
   }
 
-  // startTime
   startTime() {
-    console.log('starting time');
     this.namespace.emit('startTime');
   }
 
-  // pauseTime
   pauseTime() {
-    console.log('pausing time');
     this.namespace.emit('pauseTime');
   }
 
-  // startGame
   startGame() {
-    console.log('starting game');
     this.namespace.emit('startGame');
   }
 }
