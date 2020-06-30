@@ -50,7 +50,8 @@ const createCommandRoom = (namespaceId) => {
   const validPlayers = {};
   const game = namespaceId;
   const timer = new Timer();
-  let playerVotes;
+  let playerVotes = {};
+  let voteTally = {};
   // ensure the
   const namespace = io
     .of(`/${namespaceId}`)
@@ -105,18 +106,29 @@ const createCommandRoom = (namespaceId) => {
 
       socket.on('startVote', () => {
         if (socket.id === moderator) {
-          console.log('starting vote');
           playerVotes = { ...validPlayers };
+          namespace.emit('votingStart');
         } else {
           socket.disconnect();
         }
       });
 
-      socket.on('vote', (username, gameId, player) => {
-        if (validPlayers[socket.id]) {
-          console.log('player voting: ', username, 'gameId: ', gameId, 'voting for: ', player);
+      socket.on('endVote', () => {
+        if (socket.id === moderator) {
+          console.log('end vote');
+          playerVotes = {};
+          voteTally = {};
         } else {
           socket.disconnect();
+        }
+      });
+
+      socket.on('vote', (username, player) => {
+        if (socket.id !== moderator && validPlayers[socket.id] && playerVotes[socket.id]) {
+          voteTally[player] = voteTally[player] + 1 || 1;
+          namespace.emit('vote', username, player);
+          // emit the total vote count
+          delete playerVotes[socket.id];
         }
       });
 
