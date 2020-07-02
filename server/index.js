@@ -126,7 +126,13 @@ const createCommandRoom = (namespaceId) => {
       socket.on('vote', (username, player) => {
         if (socket.id !== moderator && validPlayers[socket.id] && playerVotes[socket.id]) {
           voteTally[player] = voteTally[player] + 1 || 1;
-          namespace.emit('vote', username, player);
+          namespace.emit('vote', {
+            vote: {
+              username,
+              votedFor: player,
+            },
+            voteTally,
+          });
           // emit the total vote count
           delete playerVotes[socket.id];
         }

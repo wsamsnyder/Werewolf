@@ -8,7 +8,7 @@ class CommandSocket {
     this.namespace = io.connect(`/${this.gameId}`);
   }
 
-  initialListeners(playerListCb, timeCb, roleAssignmentCb) {
+  initialListeners(playerListCb, timeCb, roleAssignmentCb, updateVoteTallyCb) {
     this.namespace.on('connect', () => {
       this.namespace.emit('firstConnection', this.gameId, this.userId);
     });
@@ -23,8 +23,15 @@ class CommandSocket {
       roleAssignmentCb(role);
     });
 
-    this.namespace.on('vote', (votingPlayer, playerVotedFor, voteTally) => {
-      console.log('player: ', votingPlayer, ' voted for ', playerVotedFor);
+    this.namespace.on('vote', ({
+      vote: {
+        username: votingPlayer,
+        votedFor,
+      },
+      voteTally,
+    }) => {
+      updateVoteTallyCb(voteTally, { votingPlayer, votedFor });
+      console.log('player: ', username, ' voted for ', votedFor);
       console.log('the vote totals so far are: ', voteTally);
     });
 

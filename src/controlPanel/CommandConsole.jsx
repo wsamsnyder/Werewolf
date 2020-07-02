@@ -6,6 +6,8 @@ import CommandSocket from './commandSocket';
 import TimeControls from './TimeControls';
 import Players from './Players';
 import ModeratorVotingPanel from './ModeratorVotingPanel';
+import VoteTally from './VoteTally';
+import VoteHistory from './VoteHistory';
 
 
 const CommandConsoleDiv = styled.div`
@@ -25,14 +27,19 @@ const CommandConsole = ({
   const [time, setTime] = useState(0);
   const [controlSocket, setControlSocket] = useState({});
   const [gameStarted, setGameStarted] = useState(false);
+  const [voteHistory, setVoteHistory] = useState([]);
+  const [voteTally, setVoteTally] = useState({});
 
   const timeCallback = (newTime) => setTime(newTime);
-
   const playerListCallback = (allPlayers) => setPlayers(allPlayers);
+  const updateVoteTallyCallback = (tally, history) => {
+    setVoteTally(tally);
+    setVoteHistory((oldHistory) => oldHistory.push(history));
+  };
 
   useEffect(() => {
     const newCommandSocket = new CommandSocket(connection, controlSocketIdentity, username);
-    newCommandSocket.initialListeners(playerListCallback, timeCallback, roleAssignmentCb);
+    newCommandSocket.initialListeners(playerListCallback, timeCallback, roleAssignmentCb, updateVoteTallyCallback);
     setControlSocket(newCommandSocket);
   }, []);
 
@@ -68,6 +75,12 @@ const CommandConsole = ({
       <Players
         allPlayers={players}
         controlSocket={controlSocket}
+      />
+      <VoteTally
+        voteTally={voteTally}
+      />
+      <VoteHistory
+        voteHistory={voteHistory}
       />
     </CommandConsoleDiv>
   );
