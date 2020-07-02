@@ -1,15 +1,16 @@
 import io from 'socket.io-client';
 
 class CommandSocket {
-  constructor(gameId, username) {
+  constructor(gameId, userId, username) {
     this.username = username;
+    this.userId = userId;
     this.gameId = gameId;
     this.namespace = io.connect(`/${this.gameId}`);
   }
 
   initialListeners(playerListCb, timeCb, roleAssignmentCb) {
     this.namespace.on('connect', () => {
-      this.namespace.emit('firstConnection', this.gameId, this.username);
+      this.namespace.emit('firstConnection', this.gameId, this.userId);
     });
 
     this.namespace.on('time', (time) => timeCb(time));
@@ -40,11 +41,9 @@ class CommandSocket {
     this.namespace.emit('endVote');
   }
 
-  vote(player) {
-    this.namespace.emit('vote', this.username, player);
+  vote(playerNomination) {
+    this.namespace.emit('vote', this.username, playerNomination);
   }
-
-
 
   setTime(roundTime) {
     this.namespace.emit('setTime', roundTime);

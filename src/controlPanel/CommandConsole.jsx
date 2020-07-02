@@ -15,6 +15,7 @@ const CommandConsoleDiv = styled.div`
 `;
 
 const CommandConsole = ({
+  username,
   connection,
   moderator,
   controlSocketIdentity,
@@ -30,7 +31,7 @@ const CommandConsole = ({
   const playerListCallback = (allPlayers) => setPlayers(allPlayers);
 
   useEffect(() => {
-    const newCommandSocket = new CommandSocket(connection, controlSocketIdentity);
+    const newCommandSocket = new CommandSocket(connection, controlSocketIdentity, username);
     newCommandSocket.initialListeners(playerListCallback, timeCallback, roleAssignmentCb);
     setControlSocket(newCommandSocket);
   }, []);
@@ -77,6 +78,7 @@ CommandConsole.defaultProps = {
 };
 
 CommandConsole.propTypes = {
+  username: PropTypes.string.isRequired,
   roleAssignmentCb: PropTypes.func.isRequired,
   controlSocketIdentity: PropTypes.string,
   connection: PropTypes.string.isRequired,

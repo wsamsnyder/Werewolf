@@ -14,7 +14,6 @@ const PlayersDiv = styled.div`
 const Players = ({ allPlayers, controlSocket }) => {
   const voteCastCallback = (player) => {
     controlSocket.vote(player);
-    console.log(player);
   };
 
   return (

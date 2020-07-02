@@ -110,6 +110,7 @@ const App = () => {
           moderator={moderator}
         />
         <CommandConsole
+          username={username}
           controlSocketIdentity={controlSocketIdentity}
           connection={room}
           moderator={moderator}
