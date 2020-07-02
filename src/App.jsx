@@ -5,6 +5,7 @@ import { api } from './lib';
 import ChatRoom from './chats/ChatRoom';
 import Login from './Login';
 import CommandConsole from './controlPanel/CommandConsole';
+import VoteHistory from './controlPanel/voting/VoteHistory';
 
 const MainDiv = styled.div`
   display: grid;
@@ -28,7 +29,7 @@ const App = () => {
   const [controlSocketIdentity, setControlSocketIdentity] = useState('');
   const [moderator, setModerator] = useState(false);
   const [username, setUsername] = useState('');
-  // let room;
+  const [voteHistory, setVoteHistory] = useState([]);
 
   // make a new room with the namespace of the id returned
   const createGameRoom = (newUsername) => {
@@ -89,6 +90,10 @@ const App = () => {
     setChatSockets([roleChat]);
   };
 
+  const voteHistoryCb = (newVote) => {
+    setVoteHistory((oldHistory) => [...oldHistory, newVote]);
+  };
+
   const render = (roomToJoin) => {
     if (!roomToJoin) {
       return (
@@ -98,9 +103,6 @@ const App = () => {
         />
       );
     }
-    // I think that this will take care of itself? is ChatSockets is empty, nothing will render
-    // when one is added, it should render and if my conditionals are correct
-    // it'll take the whole right side
     return (
       <MainDiv>
         <GameId>{room}</GameId>
@@ -115,6 +117,7 @@ const App = () => {
           connection={room}
           moderator={moderator}
           roleAssignmentCb={roleAssignmentCb}
+          voteHistoryCb={voteHistoryCb}
         />
         {
           chatSockets.map((roomData, idx) => (
@@ -126,6 +129,9 @@ const App = () => {
             />
           ))
         }
+        <VoteHistory
+          voteHistory={voteHistory}
+        />
       </MainDiv>
     );
   };

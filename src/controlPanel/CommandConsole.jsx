@@ -6,8 +6,7 @@ import CommandSocket from './commandSocket';
 import TimeControls from './TimeControls';
 import Players from './Players';
 import ModeratorVotingPanel from './ModeratorVotingPanel';
-import VoteTally from './VoteTally';
-import VoteHistory from './VoteHistory';
+// import VoteTally from './voting/VoteTally';
 
 
 const CommandConsoleDiv = styled.div`
@@ -22,24 +21,24 @@ const CommandConsole = ({
   moderator,
   controlSocketIdentity,
   roleAssignmentCb,
+  voteHistoryCb,
 }) => {
   const [players, setPlayers] = useState([]);
   const [time, setTime] = useState(0);
   const [controlSocket, setControlSocket] = useState({});
   const [gameStarted, setGameStarted] = useState(false);
-  const [voteHistory, setVoteHistory] = useState([]);
   const [voteTally, setVoteTally] = useState({});
 
-  const timeCallback = (newTime) => setTime(newTime);
-  const playerListCallback = (allPlayers) => setPlayers(allPlayers);
-  const updateVoteTallyCallback = (tally, history) => {
+  const timeCb = (newTime) => setTime(newTime);
+  const playerListCb = (allPlayers) => setPlayers(allPlayers);
+  const updateVoteTallyCb = (tally, history) => {
     setVoteTally(tally);
-    setVoteHistory((oldHistory) => oldHistory.push(history));
+    voteHistoryCb(history);
   };
 
   useEffect(() => {
     const newCommandSocket = new CommandSocket(connection, controlSocketIdentity, username);
-    newCommandSocket.initialListeners(playerListCallback, timeCallback, roleAssignmentCb, updateVoteTallyCallback);
+    newCommandSocket.initialListeners(playerListCb, timeCb, roleAssignmentCb, updateVoteTallyCb);
     setControlSocket(newCommandSocket);
   }, []);
 
@@ -76,12 +75,15 @@ const CommandConsole = ({
         allPlayers={players}
         controlSocket={controlSocket}
       />
-      <VoteTally
-        voteTally={voteTally}
-      />
-      <VoteHistory
-        voteHistory={voteHistory}
-      />
+      {/* {
+        Object.entries(voteTally).length
+          ? (
+            <VoteTally
+              voteTally={voteTally}
+            />
+          )
+          : null
+      } */}
     </CommandConsoleDiv>
   );
 };
@@ -96,6 +98,7 @@ CommandConsole.propTypes = {
   controlSocketIdentity: PropTypes.string,
   connection: PropTypes.string.isRequired,
   moderator: PropTypes.bool.isRequired,
+  voteHistoryCb: PropTypes.func.isRequired,
 };
 
 export default CommandConsole;

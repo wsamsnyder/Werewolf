@@ -30,9 +30,7 @@ class CommandSocket {
       },
       voteTally,
     }) => {
-      updateVoteTallyCb(voteTally, { votingPlayer, votedFor });
-      console.log('player: ', username, ' voted for ', votedFor);
-      console.log('the vote totals so far are: ', voteTally);
+      updateVoteTallyCb(voteTally, `${votingPlayer} voted for ${votedFor}`);
     });
 
     this.namespace.on('votingStart', () => {
